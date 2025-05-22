@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         // Enviar datos al backend
-        fetch('https://medpredictpro.onrender.com/predict', {
+        fetch('https://medpredictpro-api.onrender.com/predict', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         displayRecommendations(data.mortality_probability, severityLevel);
 
         // Guardar la evaluación en el histórico
-        fetch('https://medpredictpro.onrender.com/save_evaluation', {
+        fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
