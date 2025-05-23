@@ -409,3 +409,89 @@ function showToast(message, type) {
     setTimeout(() => toast.remove(), 3000);
 }
 
+// Función para guardar en la base de datos
+function saveToDatabase() {
+    // Verificar si hay datos del formulario
+    const firstName = document.getElementById('first_name').value;
+    const lastName = document.getElementById('last_name').value;
+    const rut = document.getElementById('rut').value;
+    
+    if (!firstName || !lastName || !rut) {
+        showToast('Complete los datos del paciente antes de guardar', 'warning');
+        return;
+    }
+
+    // Verificar si ya hay resultados calculados
+    const resultsDiv = document.getElementById('results');
+    if (resultsDiv.textContent.includes('Complete el formulario')) {
+        showToast('Primero calcule los resultados antes de guardar', 'warning');
+        return;
+    }
+
+    // Mostrar indicador de carga
+    const saveButton = document.getElementById('saveToDatabase');
+    saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+    saveButton.disabled = true;
+
+    // Obtener todos los datos necesarios
+    const patientData = {
+        personal_info: {
+            first_name: firstName,
+            last_name: lastName,
+            rut: rut,
+            gender: document.querySelector('input[name="gender"]:checked')?.value,
+            age: parseInt(document.getElementById('age').value)
+        },
+        clinical_data: {
+            blood_pressure: parseInt(document.getElementById('blood_pressure').value),
+            heart_rate: parseInt(document.getElementById('heart_rate').value),
+            oxygen_level: parseInt(document.getElementById('oxygen_level').value),
+            chronic_conditions: parseInt(document.getElementById('chronic_conditions').value),
+            observations: document.getElementById('medical_observations').value
+        }
+    };
+
+    // Enviar datos al backend
+    fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            patient_data: patientData,
+            results: {
+                mortality_probability: parseFloat(document.querySelector('.low-risk, .medium-risk, .high-risk')?.textContent.replace('%', '') / 100 || 0),
+                severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 0),
+                risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
+                            document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
+            }
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showToast('Evaluación guardada exitosamente', 'success');
+        } else {
+            throw new Error(data.message || 'Error desconocido al guardar');
+        }
+    })
+    .catch(error => {
+        showToast(`Error al guardar: ${error.message}`, 'danger');
+    })
+    .finally(() => {
+        saveButton.innerHTML = '<i class="bi bi-database-fill-add me-2"></i>Guardar en Base de Datos';
+        saveButton.disabled = false;
+    });
+}
+
+// Agregar event listener al botón
+document.addEventListener('DOMContentLoaded', function() {
+    // ... (código existente)
+    
+    document.getElementById('saveToDatabase').addEventListener('click', saveToDatabase);
+}); 

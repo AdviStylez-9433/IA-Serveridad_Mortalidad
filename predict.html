@@ -15,16 +15,18 @@
         <div class="container">
             <a class="navbar-brand" href="predict.html">
                 <i class="bi bi-heart-pulse me-2"></i>
-                <span class="fw-bold">MedPredict</span> 
+                <span class="fw-bold">MedPredict</span>
                 <span class="position-relative d-inline-block">
                     Pro
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" 
-                          style="font-size: 0.5rem; padding: 0.25em 0.4em; margin-left: 0.2em;">
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                        style="font-size: 0.5rem; padding: 0.25em 0.4em; margin-left: 0.2em;">
                         Demo
                         <span class="visually-hidden">versión de demostración</span>
                     </span>
                 </span>
-                <span class="d-block text-white text-end" style="font-size: 0.75rem;">Predicción Médica Inteligente</span>
+                <span class="d-block text-white text-end" style="font-size: 0.75rem;">Predicción Médica
+                    Inteligente</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -33,7 +35,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="predict.html"><i class="bi bi-speedometer2 me-1"></i> Evaluación</a>
+                        <a class="nav-link active" href="predict.html"><i class="bi bi-speedometer2 me-1"></i>
+                            Evaluación</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="history.html"><i class="bi bi-graph-up me-1"></i> Histórico</a>
@@ -44,15 +47,17 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="severidad.html">
-                                <i class="bi bi-clipboard2-pulse me-1"></i> Score de Severidad
-                            </a></li>
+                                    <i class="bi bi-clipboard2-pulse me-1"></i> Score de Severidad
+                                </a></li>
                             <li><a class="dropdown-item" href="mortalidad.html">
-                                <i class="bi bi-activity me-1"></i> Riesgo de Mortalidad
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
+                                    <i class="bi bi-activity me-1"></i> Riesgo de Mortalidad
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="custom.html">
-                                <i class="bi bi-sliders me-1"></i> Predictor Personalizado
-                            </a></li>
+                                    <i class="bi bi-sliders me-1"></i> Predictor Personalizado
+                                </a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -61,11 +66,11 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="model.html">
-                                <i class="bi bi-speedometer2 me-1"></i> Rendimiento
-                            </a></li>
+                                    <i class="bi bi-speedometer2 me-1"></i> Rendimiento
+                                </a></li>
                             <li><a class="dropdown-item" href="retraining.html">
-                                <i class="bi bi-arrow-repeat me-1"></i> Re-entrenamiento
-                            </a></li>
+                                    <i class="bi bi-arrow-repeat me-1"></i> Re-entrenamiento
+                                </a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -97,7 +102,8 @@
                             <div class="row g-3">
                                 <!-- Campos para Nombre y Apellido -->
                                 <div class="col-md-6">
-                                    <label for="first_name" class="form-label"><i class="bi bi-person-vcard me-2"></i>Nombre(s)</label>
+                                    <label for="first_name" class="form-label"><i
+                                            class="bi bi-person-vcard me-2"></i>Nombre(s)</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person"></i></span>
                                         <input type="text" class="form-control" id="first_name" required>
@@ -106,7 +112,8 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="last_name" class="form-label"><i class="bi bi-person-vcard me-2"></i>Apellido(s)</label>
+                                    <label for="last_name" class="form-label"><i
+                                            class="bi bi-person-vcard me-2"></i>Apellido(s)</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person"></i></span>
                                         <input type="text" class="form-control" id="last_name" required>
@@ -127,7 +134,8 @@
 
                                 <!-- Campo para fecha actual (solo lectura) -->
                                 <div class="col-md-6">
-                                    <label for="current_date" class="form-label"><i class="bi bi-calendar-date me-2"></i>Fecha de Evaluación</label>
+                                    <label for="current_date" class="form-label"><i
+                                            class="bi bi-calendar-date me-2"></i>Fecha de Evaluación</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                                         <input type="text" class="form-control" id="current_date" readonly>
@@ -139,13 +147,15 @@
                                     <label class="form-label"><i class="bi bi-gender-ambiguous me-2"></i>Sexo</label>
                                     <div class="d-flex">
                                         <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="gender" id="male" value="masculino" required>
+                                            <input class="form-check-input" type="radio" name="gender" id="male"
+                                                value="masculino" required>
                                             <label class="form-check-label" for="male">
                                                 <i class="bi bi-gender-male me-1"></i>Masculino
                                             </label>
                                         </div>
                                         <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="gender" id="female" value="femenino">
+                                            <input class="form-check-input" type="radio" name="gender" id="female"
+                                                value="femenino">
                                             <label class="form-check-label" for="female">
                                                 <i class="bi bi-gender-female me-1"></i>Femenino
                                             </label>
@@ -156,16 +166,19 @@
 
                                 <!-- Campo para Profesional (solo lectura) -->
                                 <div class="col-md-6">
-                                    <label for="professional" class="form-label"><i class="bi bi-person-badge me-2"></i>Profesional</label>
+                                    <label for="professional" class="form-label"><i
+                                            class="bi bi-person-badge me-2"></i>Profesional</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person-hearts"></i></span>
-                                        <input type="text" class="form-control" id="professional" value="Dr. John Doe" readonly>
+                                        <input type="text" class="form-control" id="professional" value="Dr. John Doe"
+                                            readonly>
                                     </div>
                                 </div>
 
                                 <!-- Resto del formulario -->
                                 <div class="col-md-6">
-                                    <label for="age" class="form-label"><i class="bi bi-calendar-heart me-2"></i>Edad del Paciente</label>
+                                    <label for="age" class="form-label"><i class="bi bi-calendar-heart me-2"></i>Edad
+                                        del Paciente</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
                                         <input type="number" class="form-control" id="age" required min="0" max="100">
@@ -175,7 +188,8 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="blood_pressure" class="form-label"><i class="bi bi-heart-pulse me-2"></i>Presión Arterial</label>
+                                    <label for="blood_pressure" class="form-label"><i
+                                            class="bi bi-heart-pulse me-2"></i>Presión Arterial</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-speedometer2"></i></span>
                                         <input type="number" class="form-control" id="blood_pressure" required min="70"
@@ -186,7 +200,8 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="heart_rate" class="form-label"><i class="bi bi-heart me-2"></i>Frecuencia Cardíaca</label>
+                                    <label for="heart_rate" class="form-label"><i
+                                            class="bi bi-heart me-2"></i>Frecuencia Cardíaca</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-heart-pulse"></i></span>
                                         <input type="number" class="form-control" id="heart_rate" required min="40"
@@ -197,7 +212,8 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="oxygen_level" class="form-label"><i class="bi bi-lungs me-2"></i>Sat. Oxígeno</label>
+                                    <label for="oxygen_level" class="form-label"><i class="bi bi-lungs me-2"></i>Sat.
+                                        Oxígeno</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-droplet"></i></span>
                                         <input type="number" class="form-control" id="oxygen_level" required min="70"
@@ -208,7 +224,8 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label for="chronic_conditions" class="form-label"><i class="bi bi-clipboard2-pulse me-2"></i>Condiciones Crónicas</label>
+                                    <label for="chronic_conditions" class="form-label"><i
+                                            class="bi bi-clipboard2-pulse me-2"></i>Condiciones Crónicas</label>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text"><i class="bi bi-clipboard2-check"></i></span>
                                         <select class="form-select" id="chronic_conditions" required>
@@ -221,7 +238,8 @@
                                             <option value="5">5 o más condiciones</option>
                                         </select>
                                     </div>
-                                    <div class="form-text">Nota: Incluye antecedentes previos y otras comorvilidades</div>
+                                    <div class="form-text">Nota: Incluye antecedentes previos y otras comorvilidades
+                                    </div>
                                     <div class="invalid-feedback">Por favor seleccione una opción</div>
                                 </div>
 
@@ -230,7 +248,8 @@
                                         <i class="bi bi-journal-text me-2"></i>Observaciones Médicas
                                     </label>
                                     <textarea class="form-control" id="medical_observations" rows="3"></textarea>
-                                    <div class="form-text">Nota: Informacion adicional sobre la condición del paciente</div>
+                                    <div class="form-text">Nota: Informacion adicional sobre la condición del paciente
+                                    </div>
                                 </div>
 
                                 <div class="col-12 mt-4">
@@ -304,7 +323,14 @@
                                 </div>
                             </div>
                         </div><br>
-                        <div class="form-text" style="text-align: center;">Nota: Esto es una simulación artificial y no reemplaza el diagnóstico médico profesional.</div>
+                        <div class="form-text" style="text-align: center;">Nota: Esto es una simulación artificial y no
+                            reemplaza el diagnóstico médico profesional.</div>
+
+                        <div class="col-12 mt-4">
+                            <button type="button" id="saveToDatabase" class="btn btn-success w-100 py-3">
+                                <i class="bi bi-database-fill-add me-2"></i>Guardar en Base de Datos
+                            </button>
+                        </div>
                         <div class="col-12 mt-4">
                             <button type="button" id="publishEvaluation" class="btn btn-hospital-red w-100 py-3">
                                 <i class="bi bi-upload me-2"></i>Generar PDF
@@ -326,7 +352,7 @@
                     </h5>
                     <p class="text-light opacity-75 mb-0">Sistema de apoyo clínico para evaluación de riesgo de
                         mortalidad y severidad.</p>
-                        <p class="text-light opacity-75 mb-0">Version 1.0.0</p>
+                    <p class="text-light opacity-75 mb-0">Version 1.0.0</p>
                 </div>
                 <div class="col-md-3 mb-4 mb-md-0">
                     <h5 class="text-white mb-3">Enlaces</h5>
@@ -386,17 +412,17 @@
         // Función para formatear la fecha actual
         function getCurrentDate() {
             const today = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             };
             return today.toLocaleDateString('es-ES', options);
         }
 
         // Establecer la fecha actual al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('current_date').value = getCurrentDate();
         });
 
@@ -456,14 +482,14 @@
                 yPos += 7;
                 doc.text(`RUT: ${document.getElementById('rut').value}`, margin, yPos);
                 yPos += 7;
-                
+
                 // Obtener el sexo seleccionado
                 const selectedGender = document.querySelector('input[name="gender"]:checked');
                 if (selectedGender) {
                     doc.text(`Sexo: ${selectedGender.value}`, margin, yPos);
                     yPos += 7;
                 }
-                
+
                 doc.text(`Edad: ${document.getElementById('age').value} años`, margin, yPos);
                 yPos += 7;
                 doc.text(`Fecha de evaluación: ${document.getElementById('current_date').value}`, margin, yPos);
