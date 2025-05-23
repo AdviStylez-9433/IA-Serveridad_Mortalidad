@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Elementos del DOM
     const form = document.getElementById('predictionForm');
     const resultsDiv = document.getElementById('results');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar gráficos
     const mortalityCtx = document.getElementById('mortalityChart').getContext('2d');
     const severityCtx = document.getElementById('severityChart').getContext('2d');
-    
+
     // Configuración de gráficos
     const chartOptions = {
         responsive: true,
@@ -30,20 +30,20 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Manejar envío del formulario
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
-        
+
         if (!form.checkValidity()) {
             e.stopPropagation();
             form.classList.add('was-validated');
             return;
         }
-        
+
         // Mostrar indicador de carga
         loadingIndicator.classList.remove('d-none');
         resultsDiv.innerHTML = '';
         riskFactorsDiv.innerHTML = '';
-        
+
         // Obtener datos del formulario
         const patientData = {
             age: parseInt(document.getElementById('age').value),
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             oxygen_level: parseInt(document.getElementById('oxygen_level').value),
             chronic_conditions: parseInt(document.getElementById('chronic_conditions').value)
         };
-        
+
         // Enviar datos al backend
         fetch('https://medpredictpro-api.onrender.com/predict', {
             method: 'POST',
@@ -61,51 +61,55 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(patientData)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                displayResults(data, patientData);
-            } else {
-                showError(data.message || 'Error desconocido');
-            }
-        })
-        .catch(error => {
-            showError(`Error de conexión: ${error.message}`);
-        })
-        .finally(() => {
-            loadingIndicator.classList.add('d-none');
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    displayResults(data, patientData);
+                } else {
+                    showError(data.message || 'Error desconocido');
+                }
+            })
+            .catch(error => {
+                showError(`Error de conexión: ${error.message}`);
+            })
+            .finally(() => {
+                loadingIndicator.classList.add('d-none');
+            });
     });
 
     function displayResults(data, patientData) {
         const mortalityPercent = (data.mortality_probability * 100).toFixed(1);
         const severityLevel = data.severity_level;
-        
+
         // Calcular factores de riesgo individuales
         const riskFactors = calculateRiskFactors(patientData);
-        
+
         // Determinar nivel de riesgo
         let riskLevel, riskClass;
+        let riskLevelText;
         if (data.mortality_probability < 0.3) {
-            riskLevel = "Bajo Riesgo";
+            riskLevel = "low";
+            riskLevelText = "Bajo Riesgo";
             riskClass = "low-risk";
         } else if (data.mortality_probability < 0.7) {
-            riskLevel = "Riesgo Moderado";
+            riskLevel = "medium";
+            riskLevelText = "Riesgo Moderado";
             riskClass = "medium-risk";
         } else {
-            riskLevel = "Alto Riesgo";
+            riskLevel = "high";
+            riskLevelText = "Alto Riesgo";
             riskClass = "high-risk";
         }
-        
-        // Mostrar resultados principales
+
+        // Mostrar resultados principales (código anterior permanece igual)
         resultsDiv.innerHTML = `
             <div class="animate-fade-in">
-                <h3 class="risk-indicator ${riskClass} mb-4">${riskLevel}</h3>
+                <h3 class="risk-indicator ${riskClass} mb-4">${riskLevelText}</h3>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card bg-light mb-3">
@@ -126,38 +130,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        
+
         // Actualizar gráficos
         updateCharts(data.mortality_probability, severityLevel);
-        
+
         // Mostrar factores de riesgo
         displayRiskFactors(riskFactors);
-        
+
         // Mostrar recomendaciones
         displayRecommendations(data.mortality_probability, severityLevel);
 
-        // Guardar la evaluación en el histórico
+        // Guardar la evaluación en el histórico (MODIFICADO)
+        saveEvaluationToSupabase(patientData, {
+            mortality_probability: data.mortality_probability,
+            severity_level: severityLevel,
+            risk_level: riskLevel
+        });
+    }
+
+    // Nueva función para guardar en Supabase
+    function saveEvaluationToSupabase(patientData, results) {
+        const evaluationData = {
+            patient_data: patientData,  // Esto ahora se separará en columnas en el backend
+            results: results
+        };
+
         fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                patient_data: patientData,
-                results: data
+            body: JSON.stringify(evaluationData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al guardar la evaluación');
+                }
+                return response.json();
             })
-        }).catch(error => console.error('Error guardando evaluación:', error));
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Error en la respuesta al guardar:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error guardando evaluación:', error);
+            });
     }
-    
+
     function calculateRiskFactors(patientData) {
         // Calcular puntuaciones de riesgo individuales
         const ageRisk = Math.min(patientData.age / 100, 1);
-        const bpRisk = patientData.blood_pressure > 140 ? 
+        const bpRisk = patientData.blood_pressure > 140 ?
             Math.min((patientData.blood_pressure - 140) / 60, 1) : 0;
-        const oxyRisk = patientData.oxygen_level < 95 ? 
+        const oxyRisk = patientData.oxygen_level < 95 ?
             Math.min((95 - patientData.oxygen_level) / 25, 1) : 0;
         const chronicRisk = patientData.chronic_conditions / 5;
-        
+
         return {
             age: { value: patientData.age, risk: ageRisk, label: 'Edad' },
             blood_pressure: { value: patientData.blood_pressure, risk: bpRisk, label: 'Presión Arterial' },
@@ -165,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
             chronic_conditions: { value: patientData.chronic_conditions, risk: chronicRisk, label: 'Condiciones Crónicas' }
         };
     }
-    
+
     function updateCharts(mortalityProb, severityLevel) {
         // Gráfico de mortalidad
         if (mortalityChart) mortalityChart.destroy();
@@ -188,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ...chartOptions.plugins,
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return `${context.label}: ${context.raw.toFixed(1)}%`;
                             }
                         }
@@ -197,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cutout: '70%'
             }
         });
-        
+
         // Gráfico de severidad
         if (severityChart) severityChart.destroy();
         severityChart = new Chart(severityCtx, {
@@ -227,14 +256,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     function displayRiskFactors(factors) {
         let html = '<div class="row g-3">';
-        
+
         for (const [key, factor] of Object.entries(factors)) {
             const riskPercent = (factor.risk * 100).toFixed(0);
             const riskColor = getRiskColor(factor.risk);
-            
+
             html += `
                 <div class="col-md-6">
                     <div class="risk-factor-item animate-fade-in" style="animation-delay: ${0.1 * Object.keys(factors).indexOf(key)}s">
@@ -256,15 +285,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
-        
+
         html += '</div>';
         riskFactorsDiv.innerHTML = html;
     }
-    
+
     function displayRecommendations(mortalityProb, severityLevel) {
         let recommendation = '';
         let alertClass = '';
-        
+
         if (mortalityProb < 0.3) {
             recommendation = 'Paciente de bajo riesgo. Seguimiento rutinario recomendado.';
             alertClass = 'alert-success';
@@ -275,14 +304,14 @@ document.addEventListener('DOMContentLoaded', function() {
             recommendation = 'Paciente de alto riesgo. Requiere atención inmediata y posible hospitalización.';
             alertClass = 'alert-danger';
         }
-        
+
         // Añadir recomendaciones específicas por severidad
         if (severityLevel >= 4) {
             recommendation += ' Considerar monitoreo continuo y tratamiento intensivo.';
         } else if (severityLevel >= 2) {
             recommendation += ' Se sugiere evaluación por especialista.';
         }
-        
+
         resultsDiv.insertAdjacentHTML('beforeend', `
             <div class="alert ${alertClass} mt-4 animate-fade-in" style="animation-delay: 0.4s">
                 <h5><i class="bi bi-exclamation-triangle-fill me-2"></i>Recomendación Clínica</h5>
@@ -291,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `);
     }
-    
+
     function showError(message) {
         resultsDiv.innerHTML = `
             <div class="alert alert-danger animate-fade-in">
@@ -300,14 +329,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
     }
-    
+
     // Funciones auxiliares
     function getRiskColor(risk) {
         if (risk < 0.3) return '#28a745';  // Verde
         if (risk < 0.7) return '#fd7e14';  // Naranja
         return '#dc3545';                  // Rojo
     }
-    
+
     function getSeverityColor(level) {
         const colors = {
             1: '#4CAF50',  // Verde
@@ -318,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         return colors[level] || '#9E9E9E'; // Gris por defecto
     }
-    
+
     function getFactorUnit(factor) {
         const units = {
             age: 'años',
@@ -333,21 +362,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeApp(elements) {
     // Configurar el botón de limpiar
-    elements.clearFormBtn.addEventListener('click', function() {
-        if(confirm('¿Borrar todos los datos del formulario?')) {
+    elements.clearFormBtn.addEventListener('click', function () {
+        if (confirm('¿Borrar todos los datos del formulario?')) {
             resetApplication(elements);
             showToast('Formulario limpiado correctamente', 'success');
         }
     });
-    
+
     // Resto de la inicialización de tu aplicación...
 }
 
-function resetApplication({predictionForm, resultsDiv, generatePdf}) {
+function resetApplication({ predictionForm, resultsDiv, generatePdf }) {
     // Resetear formulario
     predictionForm.reset();
     predictionForm.classList.remove('was-validated');
-    
+
     // Resetear resultados
     resultsDiv.innerHTML = `
         <div class="alert alert-info">
@@ -369,14 +398,14 @@ function showToast(message, type) {
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     `;
-    
+
     toast.style.position = 'fixed';
     toast.style.bottom = '20px';
     toast.style.right = '20px';
     toast.style.zIndex = '1100';
-    
+
     document.body.appendChild(toast);
-    
+
     setTimeout(() => toast.remove(), 3000);
 }
 

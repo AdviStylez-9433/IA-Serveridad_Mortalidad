@@ -9,18 +9,103 @@ from datetime import datetime
 import json
 import time
 import pytz
+from supabase import create_client, Client
+import os
+from dotenv import load_dotenv
 
 # Configuración inicial de la aplicación
 app = Flask(__name__, static_folder='.', static_url_path='')
 
 # Configuración CORS detallada
-CORS(app, resources={
+CORS(app, resources={   
     r"/*": {
         "origins": ["https://medpredictpro-api.onrender.com"],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
 })
+
+# Configuración de Supabase
+SUPABASE_URL = 'https://jhopjsuivasskmfnbwul.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impob3Bqc3VpdmFzc2ttZm5id3VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NjAzNjgsImV4cCI6MjA2MzUzNjM2OH0.aNU0roJdc1aH7_xGTggzhO-jByMdbE0YGS2GX2wtNm4'
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def initialize_database():
+    """
+    Inicializa la base de datos creando la tabla con estructura de columnas separadas
+    """
+    max_retries = 3
+    retry_delay = 2  # segundos entre reintentos
+    
+    # SQL para crear la tabla con columnas individuales
+    setup_sql = """
+    -- Crear tabla si no existe con estructura columnar
+    CREATE TABLE IF NOT EXISTS evaluations (
+        id TEXT PRIMARY KEY,
+        timestamp TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        
+        -- Datos del paciente (columnas individuales)
+        age INTEGER NOT NULL,
+        blood_pressure INTEGER NOT NULL,
+        heart_rate INTEGER NOT NULL,
+        oxygen_level INTEGER NOT NULL,
+        chronic_conditions INTEGER NOT NULL,
+        
+        -- Resultados de la evaluación
+        mortality_probability FLOAT NOT NULL,
+        severity_level INTEGER NOT NULL,
+        risk_level TEXT NOT NULL
+    );
+    
+    -- Habilitar Row Level Security
+    ALTER TABLE evaluations ENABLE ROW LEVEL SECURITY;
+    
+    -- Políticas básicas
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies 
+            WHERE tablename = 'evaluations' 
+            AND policyname = 'Enable insert for all users'
+        ) THEN
+            CREATE POLICY "Enable insert for all users" 
+            ON evaluations FOR INSERT 
+            TO anon, authenticated 
+            WITH CHECK (true);
+        END IF;
+        
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies 
+            WHERE tablename = 'evaluations' 
+            AND policyname = 'Enable read access for all users'
+        ) THEN
+            CREATE POLICY "Enable read access for all users"
+            ON evaluations FOR SELECT
+            USING (true);
+        END IF;
+    END
+    $$;
+    
+    -- Índices para búsquedas comunes
+    CREATE INDEX IF NOT EXISTS idx_evaluations_timestamp ON evaluations (timestamp DESC);
+    CREATE INDEX IF NOT EXISTS idx_evaluations_risk_level ON evaluations (risk_level);
+    """
+    
+    for attempt in range(max_retries):
+        try:
+            print(f"Intento {attempt + 1} de inicialización de la base de datos...")
+            supabase.execute(setup_sql)
+            print("✅ Base de datos inicializada correctamente")
+            return True
+        except Exception as e:
+            print(f"⚠️ Error en el intento {attempt + 1}: {str(e)}")
+            if attempt == max_retries - 1:
+                print("❌ Número máximo de intentos alcanzado")
+                return False
+            time.sleep(retry_delay)
+
+initialize_database()
 
 # Configuración de rutas
 MODEL_PATH = 'mortality_model.pkl'
@@ -90,19 +175,57 @@ else:
     model.fit(X, y_mortality)
     joblib.dump(model, MODEL_PATH)
 
-# Funciones para manejar evaluaciones
+# Reemplaza las funciones load_evaluations y save_evaluation con estas:
+
 def load_evaluations():
     try:
-        with open(HISTORY_DB, 'r') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+        response = supabase.table('evaluations').select("*").execute()
+        return response.data
+    except Exception as e:
+        print(f"Error loading evaluations: {str(e)}")
         return []
 
-def save_evaluation(evaluation):
-    evaluations = load_evaluations()
-    evaluations.append(evaluation)
-    with open(HISTORY_DB, 'w') as f:
-        json.dump(evaluations, f)
+@app.route('/save_evaluation', methods=['POST'])
+def save_eval():
+    try:
+        data = request.get_json()
+        
+        # Determinar nivel de riesgo
+        mortality_prob = data['results']['mortality_probability']
+        if mortality_prob < 0.3:
+            risk_level = "low"
+        elif mortality_prob < 0.7:
+            risk_level = "medium"
+        else:
+            risk_level = "high"
+        
+        evaluation = {
+            'id': f"eval-{datetime.now().timestamp()}",
+            'timestamp': datetime.now().isoformat(),
+            
+            # Datos del paciente (columnas individuales)
+            'age': data['patient_data']['age'],
+            'blood_pressure': data['patient_data']['blood_pressure'],
+            'heart_rate': data['patient_data']['heart_rate'],
+            'oxygen_level': data['patient_data']['oxygen_level'],
+            'chronic_conditions': data['patient_data']['chronic_conditions'],
+            
+            # Resultados
+            'mortality_probability': mortality_prob,
+            'severity_level': data['results']['severity_level'],
+            'risk_level': risk_level
+        }
+        
+        # Insertar en Supabase
+        response = supabase.table('evaluations').insert(evaluation).execute()
+        
+        if len(response.data) > 0:
+            return jsonify({'status': 'success', 'data': response.data[0]})
+        else:
+            return jsonify({'status': 'error', 'message': 'No se recibieron datos de Supabase'}), 500
+            
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # Endpoints de la API
 @app.route('/predict', methods=['POST', 'OPTIONS'])
