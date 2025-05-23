@@ -32,27 +32,26 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def initialize_database():
     """
-    Inicializa la base de datos creando la tabla si no existe,
-    con políticas RLS básicas y los índices necesarios.
+    Versión simplificada que solo verifica/crea la tabla
     """
     max_retries = 3
-    retry_delay = 2  # segundos entre reintentos
+    retry_delay = 2
     
     for attempt in range(max_retries):
         try:
-            print(f"Intento {attempt + 1} de inicialización de la base de datos...")
+            print(f"Intento {attempt + 1} de verificación de la tabla...")
             
-            # Verificar si la tabla existe
+            # Verificar si la tabla existe intentando una consulta simple
             try:
-                supabase.table('evaluations').select("*").limit(1).execute()
+                supabase.table('evaluations').select("id").limit(1).execute()
                 print("✅ Tabla 'evaluations' ya existe")
                 return True
             except Exception as e:
-                print("⚠️ Tabla no encontrada, creando...")
+                print("⚠️ Tabla no encontrada")
+                print("""
+                Por favor crea la tabla manualmente en Supabase con este SQL:
                 
-                # Crear la tabla usando raw SQL a través de Supabase
-                create_table_sql = """
-                CREATE TABLE IF NOT EXISTS evaluations (
+                CREATE TABLE evaluations (
                     id TEXT PRIMARY KEY,
                     timestamp TIMESTAMPTZ NOT NULL,
                     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -65,26 +64,8 @@ def initialize_database():
                     severity_level INTEGER NOT NULL,
                     risk_level TEXT NOT NULL
                 );
-                """
-                supabase.rpc('execute_sql', {'sql': create_table_sql}).execute()
-                
-                # Configurar RLS e índices
-                supabase.rpc('execute_sql', {'sql': "ALTER TABLE evaluations ENABLE ROW LEVEL SECURITY;"}).execute()
-                supabase.rpc('execute_sql', {'sql': """
-                    CREATE POLICY "Enable insert for all users" 
-                    ON evaluations FOR INSERT 
-                    TO anon, authenticated 
-                    WITH CHECK (true);
-                """}).execute()
-                
-                supabase.rpc('execute_sql', {'sql': """
-                    CREATE POLICY "Enable read access for all users"
-                    ON evaluations FOR SELECT
-                    USING (true);
-                """}).execute()
-                
-                print("✅ Base de datos inicializada correctamente")
-                return True
+                """)
+                return False
                 
         except Exception as e:
             print(f"⚠️ Error en el intento {attempt + 1}: {str(e)}")
