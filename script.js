@@ -490,7 +490,7 @@ function loadEvaluationHistory() {
     // Mostrar indicador de carga
     historyContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></div>';
 
-    fetch('https://medpredictpro-api.onrender.com/get_evaluations')
+    fetch('https://medpredictpro-api.onrender.com/get_evaluation')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error al cargar el histórico');
