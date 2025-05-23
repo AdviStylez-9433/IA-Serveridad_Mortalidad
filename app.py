@@ -155,46 +155,73 @@ def load_evaluations():
         return []
 
 @app.route('/save_evaluation', methods=['POST'])
-def save_eval():
+def save_evaluation():
     try:
         data = request.get_json()
+        print("Datos recibidos:", data)  # Log para depuración
         
-        # Determinar nivel de riesgo
-        mortality_prob = data['results']['mortality_probability']
-        if mortality_prob < 0.3:
-            risk_level = "low"
-        elif mortality_prob < 0.7:
-            risk_level = "medium"
-        else:
-            risk_level = "high"
+        # Validación de datos más robusta
+        if not data:
+            return jsonify({'status': 'error', 'message': 'No se recibieron datos'}), 400
+            
+        required_fields = {
+            'patient_data': ['personal_info', 'clinical_data'],
+            'results': ['mortality_probability', 'severity_level']
+        }
         
+        for parent_field, child_fields in required_fields.items():
+            if parent_field not in data:
+                return jsonify({'status': 'error', 'message': f'Falta el campo {parent_field}'}), 400
+            for field in child_fields:
+                if field not in data[parent_field]:
+                    return jsonify({'status': 'error', 'message': f'Falta el campo {parent_field}.{field}'}), 400
+
+        # Preparar datos para Supabase
         evaluation = {
             'id': f"eval-{datetime.now().timestamp()}",
             'timestamp': datetime.now().isoformat(),
-            
-            # Datos del paciente (columnas individuales)
-            'age': data['patient_data']['age'],
-            'blood_pressure': data['patient_data']['blood_pressure'],
-            'heart_rate': data['patient_data']['heart_rate'],
-            'oxygen_level': data['patient_data']['oxygen_level'],
-            'chronic_conditions': data['patient_data']['chronic_conditions'],
-            
-            # Resultados
-            'mortality_probability': mortality_prob,
-            'severity_level': data['results']['severity_level'],
-            'risk_level': risk_level
+            'first_name': data['patient_data']['personal_info'].get('first_name', ''),
+            'last_name': data['patient_data']['personal_info'].get('last_name', ''),
+            'rut': data['patient_data']['personal_info'].get('rut', ''),
+            'gender': data['patient_data']['personal_info'].get('gender', ''),
+            'age': int(data['patient_data']['personal_info'].get('age', 0)),
+            'blood_pressure': int(data['patient_data']['clinical_data'].get('blood_pressure', 0)),
+            'heart_rate': int(data['patient_data']['clinical_data'].get('heart_rate', 0)),
+            'oxygen_level': int(data['patient_data']['clinical_data'].get('oxygen_level', 0)),
+            'chronic_conditions': int(data['patient_data']['clinical_data'].get('chronic_conditions', 0)),
+            'observations': data['patient_data']['clinical_data'].get('observations', ''),
+            'mortality_probability': float(data['results']['mortality_probability']),
+            'severity_level': int(data['results']['severity_level']),
+            'risk_level': 'low' if float(data['results']['mortality_probability']) < 0.3 else 
+                         'medium' if float(data['results']['mortality_probability']) < 0.7 else 
+                         'high'
         }
+        
+        print("Datos a insertar:", evaluation)  # Log para depuración
         
         # Insertar en Supabase
         response = supabase.table('evaluations').insert(evaluation).execute()
         
-        if len(response.data) > 0:
-            return jsonify({'status': 'success', 'data': response.data[0]})
+        if hasattr(response, 'data') and response.data:
+            return jsonify({
+                'status': 'success',
+                'data': response.data[0],
+                'message': 'Evaluación guardada exitosamente'
+            })
         else:
-            return jsonify({'status': 'error', 'message': 'No se recibieron datos de Supabase'}), 500
+            return jsonify({
+                'status': 'error',
+                'message': 'No se recibieron datos de Supabase',
+                'supabase_response': str(response)
+            }), 500
             
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+        print("Error al guardar evaluación:", str(e))  # Log para depuración
+        return jsonify({
+            'status': 'error',
+            'message': f'Error interno del servidor: {str(e)}',
+            'error_type': type(e).__name__
+        }), 500
 
 # Endpoints de la API
 @app.route('/predict', methods=['POST', 'OPTIONS'])

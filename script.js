@@ -141,41 +141,11 @@ document.addEventListener('DOMContentLoaded', function () {
         displayRecommendations(data.mortality_probability, severityLevel);
 
         // Guardar la evaluación en el histórico (MODIFICADO)
-        saveEvaluationToSupabase(patientData, {
+        saveToDatabase(patientData, {
             mortality_probability: data.mortality_probability,
             severity_level: severityLevel,
             risk_level: riskLevel
         });
-    }
-
-    // Nueva función para guardar en Supabase
-    function saveEvaluationToSupabase(patientData, results) {
-        const evaluationData = {
-            patient_data: patientData,  // Esto ahora se separará en columnas en el backend
-            results: results
-        };
-
-        fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(evaluationData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al guardar la evaluación');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status !== 'success') {
-                    console.error('Error en la respuesta al guardar:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error guardando evaluación:', error);
-            });
     }
 
     function calculateRiskFactors(patientData) {
@@ -451,25 +421,40 @@ function saveToDatabase() {
         }
     };
 
-    // Enviar datos al backend
     fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            patient_data: patientData,
+            patient_data: {
+                personal_info: {
+                    first_name: document.getElementById('first_name').value,
+                    last_name: document.getElementById('last_name').value,
+                    rut: document.getElementById('rut').value,
+                    gender: document.querySelector('input[name="gender"]:checked')?.value,
+                    age: parseInt(document.getElementById('age').value)
+                },
+                clinical_data: {
+                    blood_pressure: parseInt(document.getElementById('blood_pressure').value),
+                    heart_rate: parseInt(document.getElementById('heart_rate').value),
+                    oxygen_level: parseInt(document.getElementById('oxygen_level').value),
+                    chronic_conditions: parseInt(document.getElementById('chronic_conditions').value),
+                    observations: document.getElementById('medical_observations').value
+                }
+            },
             results: {
-                mortality_probability: parseFloat(document.querySelector('.low-risk, .medium-risk, .high-risk')?.textContent.replace('%', '') / 100 || 0),
+                mortality_probability: parseFloat(document.querySelector('[class*="risk"] h2')?.textContent.replace('%', '') / 100 || 0),
                 severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 0),
                 risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
                             document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
             }
         })
     })
-    .then(response => {
+    .then(async response => {
         if (!response.ok) {
-            throw new Error('Error en la respuesta del servidor');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Error HTTP: ${response.status}`);
         }
         return response.json();
     })
@@ -481,6 +466,7 @@ function saveToDatabase() {
         }
     })
     .catch(error => {
+        console.error('Error detallado:', error);
         showToast(`Error al guardar: ${error.message}`, 'danger');
     })
     .finally(() => {
