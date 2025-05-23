@@ -32,72 +32,60 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def initialize_database():
     """
-    Inicializa la base de datos creando la tabla con estructura de columnas separadas
+    Inicializa la base de datos creando la tabla si no existe,
+    con políticas RLS básicas y los índices necesarios.
     """
     max_retries = 3
     retry_delay = 2  # segundos entre reintentos
     
-    # SQL para crear la tabla con columnas individuales
-    setup_sql = """
-    -- Crear tabla si no existe con estructura columnar
-    CREATE TABLE IF NOT EXISTS evaluations (
-        id TEXT PRIMARY KEY,
-        timestamp TIMESTAMPTZ NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW(),
-        
-        -- Datos del paciente (columnas individuales)
-        age INTEGER NOT NULL,
-        blood_pressure INTEGER NOT NULL,
-        heart_rate INTEGER NOT NULL,
-        oxygen_level INTEGER NOT NULL,
-        chronic_conditions INTEGER NOT NULL,
-        
-        -- Resultados de la evaluación
-        mortality_probability FLOAT NOT NULL,
-        severity_level INTEGER NOT NULL,
-        risk_level TEXT NOT NULL
-    );
-    
-    -- Habilitar Row Level Security
-    ALTER TABLE evaluations ENABLE ROW LEVEL SECURITY;
-    
-    -- Políticas básicas
-    DO $$
-    BEGIN
-        IF NOT EXISTS (
-            SELECT 1 FROM pg_policies 
-            WHERE tablename = 'evaluations' 
-            AND policyname = 'Enable insert for all users'
-        ) THEN
-            CREATE POLICY "Enable insert for all users" 
-            ON evaluations FOR INSERT 
-            TO anon, authenticated 
-            WITH CHECK (true);
-        END IF;
-        
-        IF NOT EXISTS (
-            SELECT 1 FROM pg_policies 
-            WHERE tablename = 'evaluations' 
-            AND policyname = 'Enable read access for all users'
-        ) THEN
-            CREATE POLICY "Enable read access for all users"
-            ON evaluations FOR SELECT
-            USING (true);
-        END IF;
-    END
-    $$;
-    
-    -- Índices para búsquedas comunes
-    CREATE INDEX IF NOT EXISTS idx_evaluations_timestamp ON evaluations (timestamp DESC);
-    CREATE INDEX IF NOT EXISTS idx_evaluations_risk_level ON evaluations (risk_level);
-    """
-    
     for attempt in range(max_retries):
         try:
             print(f"Intento {attempt + 1} de inicialización de la base de datos...")
-            supabase.execute(setup_sql)
-            print("✅ Base de datos inicializada correctamente")
-            return True
+            
+            # Verificar si la tabla existe
+            try:
+                supabase.table('evaluations').select("*").limit(1).execute()
+                print("✅ Tabla 'evaluations' ya existe")
+                return True
+            except Exception as e:
+                print("⚠️ Tabla no encontrada, creando...")
+                
+                # Crear la tabla usando raw SQL a través de Supabase
+                create_table_sql = """
+                CREATE TABLE IF NOT EXISTS evaluations (
+                    id TEXT PRIMARY KEY,
+                    timestamp TIMESTAMPTZ NOT NULL,
+                    created_at TIMESTAMPTZ DEFAULT NOW(),
+                    age INTEGER NOT NULL,
+                    blood_pressure INTEGER NOT NULL,
+                    heart_rate INTEGER NOT NULL,
+                    oxygen_level INTEGER NOT NULL,
+                    chronic_conditions INTEGER NOT NULL,
+                    mortality_probability FLOAT NOT NULL,
+                    severity_level INTEGER NOT NULL,
+                    risk_level TEXT NOT NULL
+                );
+                """
+                supabase.rpc('execute_sql', {'sql': create_table_sql}).execute()
+                
+                # Configurar RLS e índices
+                supabase.rpc('execute_sql', {'sql': "ALTER TABLE evaluations ENABLE ROW LEVEL SECURITY;"}).execute()
+                supabase.rpc('execute_sql', {'sql': """
+                    CREATE POLICY "Enable insert for all users" 
+                    ON evaluations FOR INSERT 
+                    TO anon, authenticated 
+                    WITH CHECK (true);
+                """}).execute()
+                
+                supabase.rpc('execute_sql', {'sql': """
+                    CREATE POLICY "Enable read access for all users"
+                    ON evaluations FOR SELECT
+                    USING (true);
+                """}).execute()
+                
+                print("✅ Base de datos inicializada correctamente")
+                return True
+                
         except Exception as e:
             print(f"⚠️ Error en el intento {attempt + 1}: {str(e)}")
             if attempt == max_retries - 1:
@@ -266,21 +254,6 @@ def predict():
             'severity_level': severity_pred,
             'status': 'success'
         })
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
-@app.route('/save_evaluation', methods=['POST'])
-def save_eval():
-    try:
-        data = request.get_json()
-        evaluation = {
-            'id': f"eval-{datetime.now().timestamp()}",
-            'timestamp': datetime.now().isoformat(),
-            'patient_data': data['patient_data'],
-            'results': data['results']
-        }
-        save_evaluation(evaluation)
-        return jsonify({'status': 'success'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
