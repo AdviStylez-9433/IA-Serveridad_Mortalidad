@@ -14,30 +14,37 @@
             background-color: #6a0dad;
             color: white;
         }
+
         .badge-severe {
             background-color: #dc3545;
             color: white;
         }
+
         .badge-moderate {
             background-color: #fd7e14;
             color: white;
         }
+
         .badge-mild {
             background-color: #ffc107;
             color: black;
         }
+
         .badge-minimal {
             background-color: #28a745;
             color: white;
         }
+
         .risk-high {
             background-color: #dc3545;
             color: white;
         }
+
         .risk-medium {
             background-color: #ffc107;
             color: black;
         }
+
         .risk-low {
             background-color: #28a745;
             color: white;
@@ -50,16 +57,18 @@
         <div class="container">
             <a class="navbar-brand" href="predict.html">
                 <i class="bi bi-heart-pulse me-2"></i>
-                <span class="fw-bold">MedPredict</span> 
+                <span class="fw-bold">MedPredict</span>
                 <span class="position-relative d-inline-block">
                     Pro
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" 
-                          style="font-size: 0.5rem; padding: 0.25em 0.4em; margin-left: 0.2em;">
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                        style="font-size: 0.5rem; padding: 0.25em 0.4em; margin-left: 0.2em;">
                         Demo
                         <span class="visually-hidden">versión de demostración</span>
                     </span>
                 </span>
-                <span class="d-block text-white text-end" style="font-size: 0.75rem;">Predicción Médica Inteligente</span>
+                <span class="d-block text-white text-end" style="font-size: 0.75rem;">Predicción Médica
+                    Inteligente</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -79,15 +88,17 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="severidad.html">
-                                <i class="bi bi-clipboard2-pulse me-1"></i> Score de Severidad
-                            </a></li>
+                                    <i class="bi bi-clipboard2-pulse me-1"></i> Score de Severidad
+                                </a></li>
                             <li><a class="dropdown-item" href="mortalidad.html">
-                                <i class="bi bi-activity me-1"></i> Riesgo de Mortalidad
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
+                                    <i class="bi bi-activity me-1"></i> Riesgo de Mortalidad
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="custom.html">
-                                <i class="bi bi-sliders me-1"></i> Predictor Personalizado
-                            </a></li>
+                                    <i class="bi bi-sliders me-1"></i> Predictor Personalizado
+                                </a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -96,11 +107,11 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="model.html">
-                                <i class="bi bi-speedometer2 me-1"></i> Rendimiento
-                            </a></li>
+                                    <i class="bi bi-speedometer2 me-1"></i> Rendimiento
+                                </a></li>
                             <li><a class="dropdown-item" href="retraining.html">
-                                <i class="bi bi-arrow-repeat me-1"></i> Re-entrenamiento
-                            </a></li>
+                                    <i class="bi bi-arrow-repeat me-1"></i> Re-entrenamiento
+                                </a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -131,7 +142,8 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="searchName" class="form-label">Nombre del Paciente</label>
-                                <input type="text" class="form-control" id="searchName" placeholder="Buscar por nombre...">
+                                <input type="text" class="form-control" id="searchName"
+                                    placeholder="Buscar por nombre...">
                             </div>
                             <div class="col-md-3">
                                 <label for="searchDate" class="form-label">Fecha</label>
@@ -161,7 +173,8 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-hospital-red text-white d-flex justify-content-between align-items-center">
+                    <div
+                        class="card-header bg-hospital-red text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Histórico de Evaluaciones</h5>
                         <div>
                             <span class="badge bg-white text-black">Total: <span id="totalEvaluations">7</span></span>
@@ -180,127 +193,9 @@
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
+                                <!-- En la sección de la tabla -->
                                 <tbody id="evaluationsTable">
-                                    <!-- Datos con IDs únicos y más información en data-attributes -->
-                                    <tr id="patient-1" data-patient-id="MP-2024-0045" data-gender="Masculino" 
-                                        data-doctor="Dr. Carlos Méndez" data-model="XGBoost v2.3" data-eval-id="EV-2024-0158"
-                                        data-comorbidities="Diabetes, Hipertensión" data-risk-factors="3/5"
-                                        data-recommendation="Ingreso recomendado" data-notes="Paciente presenta fiebre persistente y leucocitosis">
-                                        <td>Juan Pérez López</td>
-                                        <td>45</td>
-                                        <td>15/03/2024 09:30</td>
-                                        <td><span class="badge risk-high">Alto (78%)</span></td>
-                                        <td><span class="badge badge-moderate">Moderada (3/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="1">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="patient-2" data-patient-id="MP-2024-0089" data-gender="Femenino" 
-                                        data-doctor="Dra. Ana Rodríguez" data-model="Random Forest v1.7" data-eval-id="EV-2024-0157"
-                                        data-comorbidities="Hipertensión" data-risk-factors="2/5"
-                                        data-recommendation="Observación" data-notes="Paciente estable pero requiere seguimiento">
-                                        <td>María González Ruiz</td>
-                                        <td>62</td>
-                                        <td>14/03/2024 14:15</td>
-                                        <td><span class="badge risk-medium">Moderado (42%)</span></td>
-                                        <td><span class="badge badge-mild">Leve (2/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="2">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="patient-3" data-patient-id="MP-2024-0032" data-gender="Masculino" 
-                                        data-doctor="Dr. Luis Fernández" data-model="Neural Network v3.1" data-eval-id="EV-2024-0156"
-                                        data-comorbidities="Ninguna" data-risk-factors="1/5"
-                                        data-recommendation="Alta" data-notes="Paciente en buenas condiciones generales">
-                                        <td>Carlos Rojas Mendoza</td>
-                                        <td>38</td>
-                                        <td>14/03/2024 11:20</td>
-                                        <td><span class="badge risk-low">Bajo (15%)</span></td>
-                                        <td><span class="badge badge-minimal">Mínima (1/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="3">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="patient-4" data-patient-id="MP-2024-0076" data-gender="Femenino" 
-                                        data-doctor="Dra. Sofía Martínez" data-model="XGBoost v2.3" data-eval-id="EV-2024-0155"
-                                        data-comorbidities="Diabetes, Obesidad" data-risk-factors="4/5"
-                                        data-recommendation="Ingreso urgente" data-notes="Paciente con signos de sepsis">
-                                        <td>Ana Mendoza Silva</td>
-                                        <td>57</td>
-                                        <td>13/03/2024 16:45</td>
-                                        <td><span class="badge risk-high">Alto (83%)</span></td>
-                                        <td><span class="badge badge-severe">Severa (4/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="4">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="patient-5" data-patient-id="MP-2024-0012" data-gender="Masculino" 
-                                        data-doctor="Dr. Javier López" data-model="Ensemble v4.2" data-eval-id="EV-2024-0154"
-                                        data-comorbidities="EPOC, Cardiopatía" data-risk-factors="5/5"
-                                        data-recommendation="UCI" data-notes="Paciente crítico, requiere ventilación">
-                                        <td>Luis Torres Vargas</td>
-                                        <td>71</td>
-                                        <td>12/03/2024 10:10</td>
-                                        <td><span class="badge bg-dark">Crítico (91%)</span></td>
-                                        <td><span class="badge badge-critical">Extrema (5/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="5">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="patient-6" data-patient-id="MP-2024-0098" data-gender="Femenino" 
-                                        data-doctor="Dra. Patricia Gómez" data-model="Random Forest v1.7" data-eval-id="EV-2024-0153"
-                                        data-comorbidities="Asma" data-risk-factors="2/5"
-                                        data-recommendation="Seguimiento" data-notes="Paciente con síntomas respiratorios leves">
-                                        <td>Laura Díaz Contreras</td>
-                                        <td>53</td>
-                                        <td>11/03/2024 13:25</td>
-                                        <td><span class="badge risk-medium">Moderado (37%)</span></td>
-                                        <td><span class="badge badge-mild">Leve (2/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="6">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr id="patient-7" data-patient-id="MP-2024-0023" data-gender="Masculino" 
-                                        data-doctor="Dr. Ricardo Sánchez" data-model="Neural Network v3.1" data-eval-id="EV-2024-0152"
-                                        data-comorbidities="Ninguna" data-risk-factors="1/5"
-                                        data-recommendation="Alta" data-notes="Evaluación rutinaria, sin hallazgos relevantes">
-                                        <td>Roberto Sánchez Castro</td>
-                                        <td>49</td>
-                                        <td>10/03/2024 08:45</td>
-                                        <td><span class="badge risk-low">Bajo (22%)</span></td>
-                                        <td><span class="badge badge-minimal">Mínima (1/5)</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-hospital-blue view-details" 
-                                                data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                data-patient="7">
-                                                <i class="bi bi-eye-fill"></i> Ver
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <!-- Este contenido será generado dinámicamente por JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -333,7 +228,8 @@
             <div class="modal-content">
                 <div class="modal-header bg-hospital-red text-white">
                     <h5 class="modal-title">Detalles Completo de Evaluación</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-4">
@@ -385,7 +281,8 @@
                         <div class="col-md-6">
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="card-header bg-light">
-                                    <h6 class="mb-0 fw-bold"><i class="bi bi-clipboard2-pulse me-2"></i>Score de Severidad</h6>
+                                    <h6 class="mb-0 fw-bold"><i class="bi bi-clipboard2-pulse me-2"></i>Score de
+                                        Severidad</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -396,7 +293,8 @@
                                         <div class="text-end">
                                             <small class="text-muted">Puntuación</small>
                                             <div class="progress mt-2" style="height: 10px; width: 150px;">
-                                                <div class="progress-bar" id="severity-progress" role="progressbar" style="width: 0%"></div>
+                                                <div class="progress-bar" id="severity-progress" role="progressbar"
+                                                    style="width: 0%"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -420,7 +318,8 @@
                         <div class="col-md-6">
                             <div class="card h-100 border-0 shadow-sm">
                                 <div class="card-header bg-light">
-                                    <h6 class="mb-0 fw-bold"><i class="bi bi-activity me-2"></i>Riesgo de Mortalidad</h6>
+                                    <h6 class="mb-0 fw-bold"><i class="bi bi-activity me-2"></i>Riesgo de Mortalidad
+                                    </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -431,7 +330,8 @@
                                         <div class="text-end">
                                             <small class="text-muted">Probabilidad</small>
                                             <div class="progress mt-2" style="height: 10px; width: 150px;">
-                                                <div class="progress-bar" id="risk-progress" role="progressbar" style="width: 0%"></div>
+                                                <div class="progress-bar" id="risk-progress" role="progressbar"
+                                                    style="width: 0%"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -479,7 +379,8 @@
 
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-light">
-                            <h6 class="mb-0 fw-bold"><i class="bi bi-chat-square-text me-2"></i>Notas y Recomendaciones</h6>
+                            <h6 class="mb-0 fw-bold"><i class="bi bi-chat-square-text me-2"></i>Notas y Recomendaciones
+                            </h6>
                         </div>
                         <div class="card-body">
                             <div class="alert alert-warning" id="clinical-notes">
@@ -513,214 +414,195 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script>
-        // Datos clínicos específicos para cada paciente
-        const clinicalData = {
-            1: [
-                { variable: "Temperatura", value: "37.8 °C", normal: "36.5 - 37.2 °C", status: "Elevada", statusClass: "warning" },
-                { variable: "Leucocitos", value: "12,500 /μL", normal: "4,000 - 11,000 /μL", status: "Alto", statusClass: "danger" },
-                { variable: "Creatinina", value: "1.2 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Elevado", statusClass: "warning" },
-                { variable: "Plaquetas", value: "185,000 /μL", normal: "150,000 - 450,000 /μL", status: "Normal", statusClass: "success" },
-                { variable: "PCR", value: "24 mg/L", normal: "0 - 5 mg/L", status: "Elevado", statusClass: "danger" }
-            ],
-            2: [
-                { variable: "Temperatura", value: "36.9 °C", normal: "36.5 - 37.2 °C", status: "Normal", statusClass: "success" },
-                { variable: "Leucocitos", value: "8,200 /μL", normal: "4,000 - 11,000 /μL", status: "Normal", statusClass: "success" },
-                { variable: "Creatinina", value: "0.9 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Normal", statusClass: "success" },
-                { variable: "Plaquetas", value: "210,000 /μL", normal: "150,000 - 450,000 /μL", status: "Normal", statusClass: "success" }
-            ],
-            3: [
-                { variable: "Temperatura", value: "36.7 °C", normal: "36.5 - 37.2 °C", status: "Normal", statusClass: "success" },
-                { variable: "Leucocitos", value: "6,500 /μL", normal: "4,000 - 11,000 /μL", status: "Normal", statusClass: "success" },
-                { variable: "Creatinina", value: "0.8 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Normal", statusClass: "success" },
-                { variable: "Plaquetas", value: "245,000 /μL", normal: "150,000 - 450,000 /μL", status: "Normal", statusClass: "success" }
-            ],
-            4: [
-                { variable: "Temperatura", value: "38.5 °C", normal: "36.5 - 37.2 °C", status: "Elevada", statusClass: "danger" },
-                { variable: "Leucocitos", value: "15,800 /μL", normal: "4,000 - 11,000 /μL", status: "Alto", statusClass: "danger" },
-                { variable: "Creatinina", value: "1.8 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Elevado", statusClass: "danger" },
-                { variable: "Plaquetas", value: "95,000 /μL", normal: "150,000 - 450,000 /μL", status: "Bajo", statusClass: "danger" },
-                { variable: "Lactato", value: "3.2 mmol/L", normal: "0.5 - 2.2 mmol/L", status: "Elevado", statusClass: "danger" }
-            ],
-            5: [
-                { variable: "Temperatura", value: "39.1 °C", normal: "36.5 - 37.2 °C", status: "Elevada", statusClass: "danger" },
-                { variable: "Leucocitos", value: "22,300 /μL", normal: "4,000 - 11,000 /μL", status: "Alto", statusClass: "danger" },
-                { variable: "Creatinina", value: "2.5 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Elevado", statusClass: "danger" },
-                { variable: "Plaquetas", value: "65,000 /μL", normal: "150,000 - 450,000 /μL", status: "Bajo", statusClass: "danger" },
-                { variable: "pH arterial", value: "7.25", normal: "7.35 - 7.45", status: "Acidosis", statusClass: "danger" }
-            ],
-            6: [
-                { variable: "Temperatura", value: "37.1 °C", normal: "36.5 - 37.2 °C", status: "Normal", statusClass: "success" },
-                { variable: "Leucocitos", value: "9,800 /μL", normal: "4,000 - 11,000 /μL", status: "Normal", statusClass: "success" },
-                { variable: "Creatinina", value: "1.0 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Normal", statusClass: "success" },
-                { variable: "Plaquetas", value: "195,000 /μL", normal: "150,000 - 450,000 /μL", status: "Normal", statusClass: "success" }
-            ],
-            7: [
-                { variable: "Temperatura", value: "36.8 °C", normal: "36.5 - 37.2 °C", status: "Normal", statusClass: "success" },
-                { variable: "Leucocitos", value: "7,200 /μL", normal: "4,000 - 11,000 /μL", status: "Normal", statusClass: "success" },
-                { variable: "Creatinina", value: "0.9 mg/dL", normal: "0.6 - 1.1 mg/dL", status: "Normal", statusClass: "success" },
-                { variable: "Plaquetas", value: "230,000 /μL", normal: "150,000 - 450,000 /μL", status: "Normal", statusClass: "success" }
-            ]
-        };
+        // Eliminar los datos estáticos de ejemplo (clinicalData, vitalSigns, patientRecommendations)
+        // y reemplazar por:
 
-        // Datos de signos vitales para cada paciente
-        const vitalSigns = {
-            1: { pressure: "140/90 mmHg", heartRate: "98 lpm", oxygen: "92%" },
-            2: { pressure: "130/85 mmHg", heartRate: "88 lpm", oxygen: "96%" },
-            3: { pressure: "120/80 mmHg", heartRate: "72 lpm", oxygen: "98%" },
-            4: { pressure: "150/95 mmHg", heartRate: "110 lpm", oxygen: "89%" },
-            5: { pressure: "90/60 mmHg", heartRate: "125 lpm", oxygen: "85%" },
-            6: { pressure: "125/82 mmHg", heartRate: "85 lpm", oxygen: "95%" },
-            7: { pressure: "118/78 mmHg", heartRate: "76 lpm", oxygen: "97%" }
-        };
+        // Función para cargar evaluaciones desde la API
+        async function loadEvaluations() {
+            try {
+                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluations');
+                if (!response.ok) throw new Error('Error al cargar evaluaciones');
 
-        // Recomendaciones específicas para cada paciente
-        const patientRecommendations = {
-            1: [
-                "Monitorización continua de signos vitales",
-                "Hemograma de control en 24 horas",
-                "Evaluación por infectología",
-                "Considerar tomografía abdominal si persiste fiebre"
-            ],
-            2: [
-                "Control de presión arterial cada 4 horas",
-                "Repetir evaluación en 48 horas",
-                "Seguimiento ambulatorio con cardiología"
-            ],
-            3: [
-                "Alta médica",
-                "Control rutinario en 3 meses",
-                "Mantener hábitos saludables"
-            ],
-            4: [
-                "Ingreso urgente en unidad de cuidados intermedios",
-                "Iniciar antibioticoterapia de amplio espectro",
-                "Monitorización hemodinámica estricta",
-                "Control de glicemia cada 6 horas"
-            ],
-            5: [
-                "Ingreso inmediato a UCI",
-                "Soporte ventilatorio",
-                "Monitorización invasiva",
-                "Estudio de foco infeccioso",
-                "Antibioticoterapia intravenosa"
-            ],
-            6: [
-                "Tratamiento broncodilatador",
-                "Control ambulatorio en 7 días",
-                "Espirometría de control"
-            ],
-            7: [
-                "Alta médica",
-                "Control anual",
-                "Continuar con actividades normales"
-            ]
-        };
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderEvaluations(data.data);
+                    document.getElementById('totalEvaluations').textContent = data.data.length;
+                } else {
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showErrorState(error.message);
+            }
+        }
 
-        // Función para cargar los datos del paciente en el modal
-        function loadPatientData(patientId) {
-            const patientRow = document.getElementById(`patient-${patientId}`);
-            if (!patientRow) return;
+        // Función para renderizar evaluaciones en la tabla
+        function renderEvaluations(evaluations) {
+            const tableBody = document.getElementById('evaluationsTable');
+            tableBody.innerHTML = '';
 
-            // Obtener datos básicos de la fila
-            const patientName = patientRow.cells[0].textContent;
-            const patientAge = patientRow.cells[1].textContent;
-            const evaluationDate = patientRow.cells[2].textContent;
-            const riskLevel = patientRow.cells[3].textContent;
-            const severityLevel = patientRow.cells[4].textContent;
+            if (!evaluations || evaluations.length === 0) {
+                showEmptyState();
+                return;
+            }
 
-            // Obtener datos de los atributos data-
-            const patientIdCode = patientRow.dataset.patientId;
-            const gender = patientRow.dataset.gender;
-            const doctor = patientRow.dataset.doctor;
-            const model = patientRow.dataset.model;
-            const evalId = patientRow.dataset.evalId;
-            const comorbidities = patientRow.dataset.comorbidities;
-            const riskFactors = patientRow.dataset.riskFactors;
-            const recommendation = patientRow.dataset.recommendation;
-            const notes = patientRow.dataset.notes;
+            evaluations.forEach((eval, index) => {
+                const row = document.createElement('tr');
+                row.id = `eval-${eval.id}`;
+                row.dataset.evalId = eval.id;
+                row.dataset.timestamp = eval.timestamp;
+                row.dataset.mortality = eval.mortality_probability;
+                row.dataset.severity = eval.severity_level;
+                row.dataset.risk = eval.risk_level;
 
-            // Extraer porcentaje/nivel de riesgo y severidad
-            const riskPercentage = riskLevel.match(/\d+/)?.[0] || '0';
-            const severityValue = severityLevel.match(/\d+/)?.[0] || '0';
+                // Formatear fecha
+                const evalDate = new Date(eval.timestamp);
+                const formattedDate = evalDate.toLocaleDateString('es-CL', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
 
-            // Determinar clase de riesgo
-            let riskClass = '';
-            if (riskPercentage >= 70) riskClass = 'risk-high';
-            else if (riskPercentage >= 30) riskClass = 'risk-medium';
-            else riskClass = 'risk-low';
+                // Determinar clases de riesgo y severidad
+                const riskPercent = (eval.mortality_probability * 100).toFixed(0);
+                const riskClass = getRiskClass(eval.mortality_probability);
+                const severityClass = getSeverityClass(eval.severity_level);
 
-            // Determinar clase de severidad
-            let severityClass = '';
-            if (severityValue >= 4) severityClass = 'badge-severe';
-            else if (severityValue >= 3) severityClass = 'badge-moderate';
-            else if (severityValue >= 2) severityClass = 'badge-mild';
-            else severityClass = 'badge-minimal';
+                row.innerHTML = `
+                <td>${eval.first_name} ${eval.last_name}</td>
+                <td>${eval.age}</td>
+                <td>${formattedDate}</td>
+                <td><span class="badge ${riskClass}">${getRiskText(eval.risk_level)} (${riskPercent}%)</span></td>
+                <td><span class="badge ${severityClass}">${getSeverityText(eval.severity_level)} (${eval.severity_level}/5)</span></td>
+                <td>
+                    <button class="btn btn-sm btn-hospital-blue view-details" 
+                        data-bs-toggle="modal" data-bs-target="#detailModal"
+                        data-eval-id="${eval.id}">
+                        <i class="bi bi-eye-fill"></i> Ver
+                    </button>
+                </td>
+            `;
+                tableBody.appendChild(row);
+            });
+
+            // Configurar event listeners para los botones "Ver"
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function () {
+                    const evalId = this.dataset.evalId;
+                    loadEvaluationDetails(evalId);
+                });
+            });
+        }
+
+        // Función para cargar detalles de una evaluación específica
+        async function loadEvaluationDetails(evalId) {
+            try {
+                const response = await fetch(`https://medpredictpro-api.onrender.com/get_evaluation?id=${evalId}`);
+                if (!response.ok) throw new Error('Error al cargar detalles');
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    renderEvaluationDetails(data.data);
+                } else {
+                    alert('No se pudieron cargar los detalles');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar detalles: ' + error.message);
+            }
+        }
+
+        // Función para renderizar detalles en el modal
+        function renderEvaluationDetails(evaluation) {
+            // Formatear fecha
+            const evalDate = new Date(evaluation.timestamp);
+            const formattedDate = evalDate.toLocaleDateString('es-CL', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Determinar clases
+            const riskPercent = (evaluation.mortality_probability * 100).toFixed(0);
+            const riskClass = getRiskClass(evaluation.mortality_probability);
+            const severityClass = getSeverityClass(evaluation.severity_level);
 
             // Llenar información básica
-            document.getElementById('detail-name').textContent = patientName;
-            document.getElementById('detail-age').textContent = `${patientAge} años`;
-            document.getElementById('detail-gender').textContent = gender;
-            document.getElementById('detail-id').textContent = patientIdCode;
-            document.getElementById('detail-date').textContent = evaluationDate;
-            document.getElementById('detail-doctor').textContent = doctor;
-            document.getElementById('detail-model').textContent = model;
-            document.getElementById('detail-eval-id').textContent = evalId;
+            document.getElementById('detail-name').textContent = `${evaluation.first_name} ${evaluation.last_name}`;
+            document.getElementById('detail-age').textContent = `${evaluation.age} años`;
+            document.getElementById('detail-gender').textContent = evaluation.gender || 'No especificado';
+            document.getElementById('detail-id').textContent = evaluation.rut || 'No disponible';
+            document.getElementById('detail-date').textContent = formattedDate;
+            document.getElementById('detail-doctor').textContent = 'Médico tratante'; // Puedes ajustar esto
+            document.getElementById('detail-model').textContent = 'Modelo Predictivo'; // Puedes ajustar esto
+            document.getElementById('detail-eval-id').textContent = evaluation.id;
 
             // Llenar sección de severidad
-            document.getElementById('detail-severity-score').textContent = `${severityValue}/5`;
+            document.getElementById('detail-severity-score').textContent = `${evaluation.severity_level}/5`;
             const severityBadge = document.getElementById('detail-severity-label');
-            severityBadge.textContent = getSeverityLabel(severityValue);
+            severityBadge.textContent = getSeverityText(evaluation.severity_level);
             severityBadge.className = `badge ${severityClass}`;
-            
+
             // Actualizar barra de progreso de severidad
             const severityProgress = document.getElementById('severity-progress');
-            severityProgress.style.width = `${severityValue * 20}%`;
+            severityProgress.style.width = `${(evaluation.severity_level / 5) * 100}%`;
             severityProgress.className = `progress-bar ${severityClass.replace('badge-', 'bg-')}`;
 
             // Llenar sección de riesgo
-            document.getElementById('detail-risk-score').textContent = `${riskPercentage}%`;
+            document.getElementById('detail-risk-score').textContent = `${riskPercent}%`;
             const riskBadge = document.getElementById('detail-risk-label');
-            riskBadge.textContent = getRiskLabel(riskPercentage);
+            riskBadge.textContent = getRiskText(evaluation.risk_level);
             riskBadge.className = `badge ${riskClass}`;
-            
+
             // Actualizar barra de progreso de riesgo
             const riskProgress = document.getElementById('risk-progress');
-            riskProgress.style.width = `${riskPercentage}%`;
+            riskProgress.style.width = `${riskPercent}%`;
             riskProgress.className = `progress-bar ${riskClass.replace('risk-', 'bg-')}`;
 
             // Llenar información adicional
-            document.getElementById('detail-risk-factors').textContent = riskFactors;
-            document.getElementById('detail-comorbidities').textContent = comorbidities;
-            document.getElementById('detail-recommendation').textContent = recommendation;
-            document.getElementById('detail-notes').textContent = notes;
+            document.getElementById('detail-risk-factors').textContent = 'Calculado'; // Puedes ajustar esto
+            document.getElementById('detail-comorbidities').textContent = evaluation.observations || 'No especificadas';
+            document.getElementById('detail-recommendation').textContent = getRecommendation(evaluation.risk_level);
+            document.getElementById('detail-notes').textContent = evaluation.observations || 'No hay notas adicionales';
 
             // Llenar signos vitales
-            const signs = vitalSigns[patientId] || {};
-            document.getElementById('detail-pressure').textContent = signs.pressure || 'No disponible';
-            document.getElementById('detail-heart-rate').textContent = signs.heartRate || 'No disponible';
-            document.getElementById('detail-oxygen').textContent = signs.oxygen || 'No disponible';
+            document.getElementById('detail-pressure').textContent = `${evaluation.blood_pressure} mmHg`;
+            document.getElementById('detail-heart-rate').textContent = `${evaluation.heart_rate} lpm`;
+            document.getElementById('detail-oxygen').textContent = `${evaluation.oxygen_level}%`;
 
             // Llenar tabla de variables clínicas
             const clinicalTable = document.querySelector('#clinical-table tbody');
             clinicalTable.innerHTML = '';
-            const data = clinicalData[patientId] || [];
-            
-            data.forEach(item => {
+
+            const clinicalVars = [
+                { variable: 'Presión Arterial', value: `${evaluation.blood_pressure} mmHg`, normal: '90-140 mmHg' },
+                { variable: 'Frecuencia Cardíaca', value: `${evaluation.heart_rate} lpm`, normal: '60-100 lpm' },
+                { variable: 'Oxígeno en Sangre', value: `${evaluation.oxygen_level}%`, normal: '95-100%' },
+                { variable: 'Condiciones Crónicas', value: evaluation.chronic_conditions, normal: '0-2' }
+            ];
+
+            clinicalVars.forEach(item => {
                 const row = document.createElement('tr');
+                const status = getClinicalStatus(item.variable, item.value);
+
                 row.innerHTML = `
-                    <td>${item.variable}</td>
-                    <td>${item.value}</td>
-                    <td>${item.normal}</td>
-                    <td><span class="badge bg-${item.statusClass}">${item.status}</span></td>
-                `;
+                <td>${item.variable}</td>
+                <td>${item.value}</td>
+                <td>${item.normal}</td>
+                <td><span class="badge bg-${status.class}">${status.text}</span></td>
+            `;
                 clinicalTable.appendChild(row);
             });
 
             // Llenar recomendaciones
             const recommendationsList = document.getElementById('detail-recommendations');
             recommendationsList.innerHTML = '';
-            const recommendations = patientRecommendations[patientId] || [];
-            
+
+            const recommendations = generateRecommendations(evaluation);
             recommendations.forEach(rec => {
                 const li = document.createElement('li');
                 li.textContent = rec;
@@ -729,42 +611,139 @@
         }
 
         // Funciones auxiliares
-        function getSeverityLabel(value) {
-            value = parseInt(value);
-            if (value >= 5) return 'Extrema';
-            if (value >= 4) return 'Severa';
-            if (value >= 3) return 'Moderada';
-            if (value >= 2) return 'Leve';
+        function getRiskClass(probability) {
+            if (probability >= 0.7) return 'risk-high';
+            if (probability >= 0.3) return 'risk-medium';
+            return 'risk-low';
+        }
+
+        function getSeverityClass(level) {
+            if (level >= 5) return 'badge-critical';
+            if (level >= 4) return 'badge-severe';
+            if (level >= 3) return 'badge-moderate';
+            if (level >= 2) return 'badge-mild';
+            return 'badge-minimal';
+        }
+
+        function getRiskText(riskLevel) {
+            return {
+                'high': 'Alto',
+                'medium': 'Moderado',
+                'low': 'Bajo'
+            }[riskLevel] || 'Desconocido';
+        }
+
+        function getSeverityText(level) {
+            if (level >= 5) return 'Crítica';
+            if (level >= 4) return 'Severa';
+            if (level >= 3) return 'Moderada';
+            if (level >= 2) return 'Leve';
             return 'Mínima';
         }
 
-        function getRiskLabel(percentage) {
-            percentage = parseInt(percentage);
-            if (percentage >= 80) return 'Riesgo crítico';
-            if (percentage >= 60) return 'Alto riesgo';
-            if (percentage >= 40) return 'Riesgo moderado';
-            if (percentage >= 20) return 'Bajo riesgo';
-            return 'Riesgo mínimo';
+        function getRecommendation(riskLevel) {
+            return {
+                'high': 'Intervención inmediata requerida',
+                'medium': 'Evaluación adicional recomendada',
+                'low': 'Seguimiento rutinario'
+            }[riskLevel] || 'No especificado';
         }
 
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Configurar event listeners para los botones "Ver"
-            document.querySelectorAll('.view-details').forEach(button => {
-                button.addEventListener('click', function() {
-                    const patientId = this.dataset.patient;
-                    loadPatientData(patientId);
-                });
-            });
+        function getClinicalStatus(variable, value) {
+            value = parseInt(value);
+            switch (variable) {
+                case 'Presión Arterial':
+                    if (value > 140) return { text: 'Alta', class: 'danger' };
+                    if (value < 90) return { text: 'Baja', class: 'warning' };
+                    return { text: 'Normal', class: 'success' };
+                case 'Frecuencia Cardíaca':
+                    if (value > 100) return { text: 'Alta', class: 'danger' };
+                    if (value < 60) return { text: 'Baja', class: 'warning' };
+                    return { text: 'Normal', class: 'success' };
+                case 'Oxígeno en Sangre':
+                    if (value < 90) return { text: 'Baja', class: 'danger' };
+                    if (value < 95) return { text: 'Moderada', class: 'warning' };
+                    return { text: 'Normal', class: 'success' };
+                case 'Condiciones Crónicas':
+                    if (value > 3) return { text: 'Alta', class: 'danger' };
+                    if (value > 1) return { text: 'Moderada', class: 'warning' };
+                    return { text: 'Baja', class: 'success' };
+                default:
+                    return { text: 'Normal', class: 'success' };
+            }
+        }
 
-            // Configurar botones de impresión y exportación
-            document.getElementById('print-btn').addEventListener('click', function() {
-                window.print();
-            });
+        function generateRecommendations(evaluation) {
+            const recs = [];
 
-            document.getElementById('export-btn').addEventListener('click', function() {
-                alert('Función de exportación a PDF se implementará aquí');
-                // Aquí iría el código para exportar a PDF usando jsPDF
+            // Recomendaciones basadas en riesgo
+            if (evaluation.mortality_probability >= 0.7) {
+                recs.push('Hospitalización inmediata recomendada');
+                recs.push('Monitorización continua de signos vitales');
+            } else if (evaluation.mortality_probability >= 0.3) {
+                recs.push('Evaluación por especialista recomendada');
+                recs.push('Repetir evaluación en 24-48 horas');
+            } else {
+                recs.push('Seguimiento ambulatorio');
+            }
+
+            // Recomendaciones basadas en severidad
+            if (evaluation.severity_level >= 4) {
+                recs.push('Considerar estudios de laboratorio adicionales');
+            }
+
+            // Recomendaciones basadas en oxígeno
+            if (evaluation.oxygen_level < 90) {
+                recs.push('Oxigenoterapia recomendada');
+            }
+
+            // Recomendaciones basadas en presión arterial
+            if (evaluation.blood_pressure > 140) {
+                recs.push('Control de presión arterial frecuente');
+            } else if (evaluation.blood_pressure < 90) {
+                recs.push('Evaluación de hipotensión');
+            }
+
+            return recs;
+        }
+
+        function showEmptyState() {
+            const tableBody = document.getElementById('evaluationsTable');
+            tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <i class="bi bi-database-exclamation" style="font-size: 2rem;"></i>
+                    <h5 class="mt-3">No hay evaluaciones registradas</h5>
+                    <p class="text-muted">Realiza una evaluación para ver los resultados aquí</p>
+                </td>
+            </tr>
+        `;
+        }
+
+        function showErrorState(message) {
+            const tableBody = document.getElementById('evaluationsTable');
+            tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i>
+                    <h5 class="mt-3">Error al cargar evaluaciones</h5>
+                    <p class="text-muted">${message}</p>
+                    <button class="btn btn-hospital-red mt-2" onclick="loadEvaluations()">
+                        <i class="bi bi-arrow-clockwise"></i> Reintentar
+                    </button>
+                </td>
+            </tr>
+        `;
+        }
+
+        // Cargar evaluaciones al iniciar
+        document.addEventListener('DOMContentLoaded', function () {
+            loadEvaluations();
+
+            // Configurar botón de búsqueda
+            document.getElementById('searchButton').addEventListener('click', function () {
+                // Implementar filtrado aquí si es necesario
+                alert('Funcionalidad de filtrado se implementará aquí');
             });
         });
     </script>

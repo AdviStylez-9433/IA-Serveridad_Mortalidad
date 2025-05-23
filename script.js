@@ -481,3 +481,119 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('saveToDatabase').addEventListener('click', saveToDatabase);
 }); 
+
+// Función para cargar y mostrar el histórico de evaluaciones
+function loadEvaluationHistory() {
+    const historyContainer = document.getElementById('evaluationHistory');
+    if (!historyContainer) return;
+
+    // Mostrar indicador de carga
+    historyContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></div>';
+
+    fetch('https://medpredictpro-api.onrender.com/get_evaluations')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar el histórico');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success' && data.data.length > 0) {
+                renderEvaluationHistory(data.data);
+            } else {
+                historyContainer.innerHTML = '<div class="alert alert-info">No hay evaluaciones registradas</div>';
+            }
+        })
+        .catch(error => {
+            historyContainer.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+        });
+}
+
+// Función para renderizar la tabla de evaluaciones
+function renderEvaluationHistory(evaluations) {
+    const historyContainer = document.getElementById('evaluationHistory');
+    
+    // Ordenar evaluaciones por fecha (más reciente primero)
+    evaluations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    const tableHtml = `
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Edad</th>
+                        <th>Riesgo</th>
+                        <th>Mortalidad</th>
+                        <th>Severidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${evaluations.map(eval => `
+                        <tr>
+                            <td>${formatDate(eval.timestamp)}</td>
+                            <td>${eval.first_name} ${eval.last_name}</td>
+                            <td>${eval.age}</td>
+                            <td><span class="badge ${getRiskBadgeClass(eval.risk_level)}">${getRiskText(eval.risk_level)}</span></td>
+                            <td>${(eval.mortality_probability * 100).toFixed(1)}%</td>
+                            <td><span class="severity-indicator severity-${eval.severity_level}">Nivel ${eval.severity_level}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewEvaluationDetails('${eval.id}')">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    historyContainer.innerHTML = tableHtml;
+}
+
+// Funciones auxiliares
+function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('es-CL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function getRiskBadgeClass(riskLevel) {
+    return {
+        'low': 'bg-success',
+        'medium': 'bg-warning text-dark',
+        'high': 'bg-danger'
+    }[riskLevel] || 'bg-secondary';
+}
+
+function getRiskText(riskLevel) {
+    return {
+        'low': 'Bajo',
+        'medium': 'Moderado',
+        'high': 'Alto'
+    }[riskLevel] || 'Desconocido';
+}
+
+// Función para ver detalles (puedes implementarla según tus necesidades)
+function viewEvaluationDetails(evaluationId) {
+    // Implementa la lógica para mostrar los detalles completos de la evaluación
+    alert(`Mostrando detalles de la evaluación ID: ${evaluationId}`);
+    // Aquí podrías hacer un fetch para obtener los detalles completos
+    // y mostrarlos en un modal o página separada
+}
+
+// Cargar el histórico cuando la página esté lista
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si estamos en la página de histórico
+    if (document.getElementById('evaluationHistory')) {
+        loadEvaluationHistory();
+    }
+});

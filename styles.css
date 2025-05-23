@@ -379,3 +379,67 @@ a.text-hospital-red:hover {
 .bg-custom-warning { background-color: #ffc107; }
 .bg-custom-alert { background-color: #fd7e14; }
 .bg-custom-danger { background-color: #dc3545; }
+
+/* Estilos para el estado vacío */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #adb5bd;
+}
+
+/* Mejoras para la tabla */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table th {
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+}
+
+/* Estilos para los badges de severidad */
+.badge-critical { background-color: #6a0dad; color: white; }
+.badge-severe { background-color: #dc3545; color: white; }
+.badge-moderate { background-color: #fd7e14; color: white; }
+.badge-mild { background-color: #ffc107; color: black; }
+.badge-minimal { background-color: #28a745; color: white; }
+
+/* Estilos para los badges de riesgo */
+.risk-high { background-color: #dc3545; color: white; }
+.risk-medium { background-color: #ffc107; color: black; }
+.risk-low { background-color: #28a745; color: white; }
+
+/* Mejoras para el modal */
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Estilos para la paginación */
+.pagination .page-item.active .page-link {
+    background-color: #00487C;
+    border-color: #00487C;
+}
+
+.pagination .page-link {
+    color: #00487C;
+}
+
+/* Estilos para el botón de recarga */
+.btn-reload {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

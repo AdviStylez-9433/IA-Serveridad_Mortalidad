@@ -265,38 +265,27 @@ def predict():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-@app.route('/get_evaluations', methods=['GET'])
-def get_evals():
+@app.route('/get_evaluation', methods=['GET'])
+def get_evaluation():
     try:
-        evaluations = load_evaluations()
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
+        eval_id = request.args.get('id')
+        if not eval_id:
+            return jsonify({'status': 'error', 'message': 'Se requiere ID de evaluación'}), 400
         
-        filtered = []
-        for eval in evaluations:
-            eval_date = datetime.fromisoformat(eval['timestamp'])
-            
-            if start_date:
-                start = datetime.fromisoformat(start_date)
-                if eval_date < start:
-                    continue
-            
-            if end_date:
-                end = datetime.fromisoformat(end_date)
-                if eval_date > end:
-                    continue
-            
-            filtered.append(eval)
+        response = supabase.table('evaluations').select('*').eq('id', eval_id).execute()
         
-        filtered.sort(key=lambda x: x['timestamp'], reverse=True)
+        if not response.data:
+            return jsonify({'status': 'error', 'message': 'Evaluación no encontrada'}), 404
         
         return jsonify({
             'status': 'success',
-            'data': filtered,
-            'count': len(filtered)
+            'data': response.data[0]
         })
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
 
 # Rutas para archivos estáticos
 def get_html(filename):
