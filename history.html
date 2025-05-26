@@ -418,33 +418,42 @@
         // y reemplazar por:
 
         // Función para cargar evaluaciones desde la API
+        // Función principal para cargar todas las evaluaciones
         async function loadEvaluations() {
             try {
-                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluation', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // Add any required authentication headers
-                        // 'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    },
-                    // credentials: 'include' // if using cookies
-                });
+                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluations');
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => null);
-                    throw new Error(errorData?.message || `HTTP error! status: ${response.status}`);
+                    throw new Error(errorData?.message || 'Error al cargar evaluaciones');
                 }
 
                 const data = await response.json();
+
                 if (data.status === 'success') {
-                    renderEvaluations(data.data);
-                    document.getElementById('totalEvaluations').textContent = data.data.length;
+                    if (data.data && data.data.length > 0) {
+                        renderEvaluations(data.data);
+                        document.getElementById('totalEvaluations').textContent = data.count || data.data.length;
+                    } else {
+                        showEmptyState();
+                    }
                 } else {
                     showEmptyState();
                 }
             } catch (error) {
                 console.error('Error:', error);
                 showErrorState(error.message);
+            }
+        }
+
+        // Función para cargar detalles de una evaluación específica (se mantiene igual)
+        async function loadEvaluationDetails(evalId) {
+            try {
+                const response = await fetch(`https://medpredictpro-api.onrender.com/get_evaluation?id=${evalId}`);
+                // ... resto del código igual ...
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar detalles: ' + error.message);
             }
         }
 

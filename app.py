@@ -265,22 +265,24 @@ def predict():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-@app.route('/get_evaluation', methods=['GET'])
-def get_evaluation():
+@app.route('/get_evaluations', methods=['GET'])  # Cambiamos el nombre del endpoint
+def get_evaluations():
     try:
-        eval_id = request.args.get('id')
-        if not eval_id:
-            return jsonify({'status': 'error', 'message': 'Se requiere ID de evaluación'}), 400
-        
-        response = supabase.table('evaluations').select('*').eq('id', eval_id).execute()
+        # Obtenemos todas las evaluaciones ordenadas por fecha descendente
+        response = supabase.table('evaluations') \
+                         .select('*') \
+                         .order('timestamp', desc=True) \
+                         .execute()
         
         if not response.data:
-            return jsonify({'status': 'error', 'message': 'Evaluación no encontrada'}), 404
+            return jsonify({'status': 'success', 'data': [], 'message': 'No hay evaluaciones registradas'})
         
         return jsonify({
             'status': 'success',
-            'data': response.data[0]
+            'data': response.data,
+            'count': len(response.data)
         })
+        
     except Exception as e:
         return jsonify({
             'status': 'error',
