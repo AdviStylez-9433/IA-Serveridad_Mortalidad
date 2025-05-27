@@ -481,7 +481,7 @@
         async function loadEvaluations() {
             try {
                 showLoadingState();
-                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluation');
+                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluations');
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => null);
@@ -718,9 +718,8 @@
                 </div>
             `;
 
-                const response = await fetch(`https://medpredictpro-api.onrender.com/get_evaluation?id=${evalId}`)
+                const response = await fetch(`https://medpredictpro-api.onrender.com/get_evaluation_details?id=${evalId}`); 
                 if (!response.ok) throw new Error('Error al cargar detalles');
-
                 const data = await response.json();
                 if (data.status === 'success') {
                     renderEvaluationDetails(data.data);

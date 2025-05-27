@@ -265,10 +265,32 @@ def predict():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-@app.route('/get_evaluation', methods=['GET'])
-def get_evaluation():
+@app.route('/get_evaluations', methods=['GET'])
+def get_evaluations():
     try:
-        # Obtener el ID de la evaluación desde los parámetros de la URL
+        response = supabase.table('evaluations') \
+                         .select('*') \
+                         .order('timestamp', desc=True) \
+                         .execute()
+        
+        if not response.data:
+            return jsonify({'status': 'success', 'data': [], 'message': 'No hay evaluaciones registradas'})
+        
+        return jsonify({
+            'status': 'success',
+            'data': response.data,
+            'count': len(response.data)
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+        
+@app.route('/get_evaluation_details', methods=['GET'])
+def get_evaluation_details():
+    try:
         eval_id = request.args.get('id')
         
         if not eval_id:
@@ -277,7 +299,6 @@ def get_evaluation():
                 'message': 'Se requiere el parámetro "id"'
             }), 400
 
-        # Consultar la evaluación específica en Supabase
         response = supabase.table('evaluations') \
                          .select('*') \
                          .eq('id', eval_id) \
@@ -292,7 +313,7 @@ def get_evaluation():
 
         return jsonify({
             'status': 'success',
-            'data': response.data[0]  # Devolver solo el primer (y único) resultado
+            'data': response.data[0]
         })
 
     except Exception as e:
