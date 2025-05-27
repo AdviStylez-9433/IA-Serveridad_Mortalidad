@@ -288,6 +288,33 @@ def get_evaluations():
             'status': 'error',
             'message': str(e)
         }), 500
+        
+@app.route('/get_evaluation/<int:evaluation_id>', methods=['GET'])
+def get_evaluation(evaluation_id):
+    try:
+        # Buscar la evaluación con el ID proporcionado
+        response = supabase.table('evaluations') \
+                           .select('*') \
+                           .eq('id', evaluation_id) \
+                           .single() \
+                           .execute()
+
+        if not response.data:
+            return jsonify({
+                'status': 'error',
+                'message': f'No se encontró ninguna evaluación con id {evaluation_id}'
+            }), 404
+
+        return jsonify({
+            'status': 'success',
+            'data': response.data
+        })
+
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
 
 # Rutas para archivos estáticos
 def get_html(filename):
