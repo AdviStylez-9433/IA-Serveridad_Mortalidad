@@ -12,9 +12,16 @@ import pytz
 from supabase import create_client, Client
 import os
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+import datetime
 
 # Configuración inicial de la aplicación
 app = Flask(__name__, static_folder='.', static_url_path='')
+
+# Configuración JWT
+app.config['SECRET_KEY'] = 'medpredictpro2025'  # Cambia esto en producción!
+app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(hours=24)
 
 # Configuración CORS detallada
 CORS(app, resources={   
@@ -24,6 +31,75 @@ CORS(app, resources={
         "allow_headers": ["Content-Type"]
     }
 })
+
+# Funciones de ayuda para autenticación
+def generate_token(user_id):
+    payload = {
+        'exp': datetime.datetime.utcnow() + app.config['JWT_EXPIRATION_DELTA'],
+        'iat': datetime.datetime.utcnow(),
+        'sub': user_id
+    }
+    return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+
+def verify_token(token):
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        return payload['sub']
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+# Endpoint de login
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            return jsonify({'status': 'error', 'message': 'Usuario y contraseña requeridos'}), 400
+
+        # Buscar usuario en Supabase
+        response = supabase.table('users') \
+                         .select('*') \
+                         .eq('username', username) \
+                         .limit(1) \
+                         .execute()
+
+        if not response.data or len(response.data) == 0:
+            return jsonify({'status': 'error', 'message': 'Usuario no encontrado'}), 401
+
+        user = response.data[0]
+
+        # Verificar contraseña
+        if not check_password_hash(user['password_hash'], password):
+            return jsonify({'status': 'error', 'message': 'Contraseña incorrecta'}), 401
+
+        # Actualizar último login
+        supabase.table('users') \
+               .update({'last_login': datetime.datetime.now().isoformat()}) \
+               .eq('id', user['id']) \
+               .execute()
+
+        # Generar token JWT
+        token = generate_token(user['id'])
+
+        return jsonify({
+            'status': 'success',
+            'token': token,
+            'user': {
+                'id': user['id'],
+                'username': user['username'],
+                'email': user['email'],
+                'full_name': user['full_name'],
+                'role': user['role']
+            }
+        })
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # Configuración de Supabase
 SUPABASE_URL = 'https://jhopjsuivasskmfnbwul.supabase.co'

@@ -168,10 +168,10 @@
             });
 
             // Manejo del formulario de login
-            loginForm.addEventListener('submit', function (e) {
+            loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
-                // Simular proceso de autenticación
+                // Mostrar estado de carga
                 loginText.textContent = 'Verificando...';
                 loginSpinner.classList.remove('d-none');
                 loginButton.disabled = true;
@@ -182,10 +182,25 @@
                 const password = document.getElementById('password').value;
                 const rememberMe = document.getElementById('rememberMe').checked;
 
-                // Simular retraso de red
-                setTimeout(() => {
-                    // Validación simple (en producción esto sería una llamada a la API)
-                    if (username === 'admin' && password === 'medpredictpro') {
+                try {
+                    const response = await fetch('https://medpredictpro-api.onrender.com/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.status === 'success') {
+                        // Guardar token y datos de usuario
+                        localStorage.setItem('authToken', data.token);
+                        localStorage.setItem('userData', JSON.stringify(data.user));
+
                         // Guardar en localStorage si marcó "Recordar"
                         if (rememberMe) {
                             localStorage.setItem('rememberedUser', username);
@@ -197,21 +212,20 @@
                         window.location.href = 'predict.html';
                     } else {
                         // Mostrar error
-                        errorMessage.textContent = 'Usuario o contraseña incorrectos';
+                        errorMessage.textContent = data.message || 'Error en la autenticación';
                         loginError.classList.remove('d-none');
-
-                        // Restaurar botón
-                        loginText.textContent = 'Ingresar';
-                        loginSpinner.classList.add('d-none');
-                        loginButton.disabled = false;
-
-                        // Agitar el formulario para feedback
                         loginForm.classList.add('shake');
-                        setTimeout(() => {
-                            loginForm.classList.remove('shake');
-                        }, 500);
+                        setTimeout(() => loginForm.classList.remove('shake'), 500);
                     }
-                }, 1500);
+                } catch (error) {
+                    errorMessage.textContent = 'Error de conexión con el servidor';
+                    loginError.classList.remove('d-none');
+                } finally {
+                    // Restaurar botón
+                    loginText.textContent = 'Ingresar';
+                    loginSpinner.classList.add('d-none');
+                    loginButton.disabled = false;
+                }
             });
 
             // Cargar usuario recordado si existe
