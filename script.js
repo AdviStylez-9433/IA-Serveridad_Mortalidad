@@ -140,12 +140,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Mostrar recomendaciones
         displayRecommendations(data.mortality_probability, severityLevel);
 
-        // Guardar la evaluación en el histórico (MODIFICADO)
+        /*Guardar la evaluación en el histórico (MODIFICADO)
         saveToDatabase(patientData, {
             mortality_probability: data.mortality_probability,
             severity_level: severityLevel,
             risk_level: riskLevel
-        });
+        });*/
     }
 
     function calculateRiskFactors(patientData) {

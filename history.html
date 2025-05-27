@@ -718,7 +718,7 @@
                 </div>
             `;
 
-                const response = await fetch(`https://medpredictpro-api.onrender.com/get_evaluation_details?id=${evalId}`); 
+                const response = await fetch(`https://medpredictpro-api.onrender.com/get_evaluation_details?id=${evalId}`);
                 if (!response.ok) throw new Error('Error al cargar detalles');
                 const data = await response.json();
                 if (data.status === 'success') {
@@ -741,100 +741,134 @@
             }
         }
 
-        // Función para renderizar detalles en el modal
         function renderEvaluationDetails(evaluation) {
-            // Formatear fecha
-            const evalDate = new Date(evaluation.timestamp);
-            const formattedDate = evalDate.toLocaleDateString('es-CL', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            try {
+                // Formatear fecha
+                const evalDate = new Date(evaluation.timestamp);
+                const formattedDate = evalDate.toLocaleDateString('es-CL', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
 
-            // Determinar clases
-            const riskPercent = (evaluation.mortality_probability * 100).toFixed(0);
-            const riskClass = getRiskClass(evaluation.mortality_probability);
-            const severityClass = getSeverityClass(evaluation.severity_level);
+                // Determinar clases
+                const riskPercent = ((evaluation.mortality_probability || 0) * 100).toFixed(0);
+                const riskClass = getRiskClass(evaluation.mortality_probability);
+                const severityClass = getSeverityClass(evaluation.severity_level);
 
-            // Llenar información básica
-            document.getElementById('detail-name').textContent = `${evaluation.first_name} ${evaluation.last_name}`;
-            document.getElementById('detail-age').textContent = `${evaluation.age} años`;
-            document.getElementById('detail-gender').textContent = evaluation.gender || 'No especificado';
-            document.getElementById('detail-id').textContent = evaluation.rut || 'No disponible';
-            document.getElementById('detail-date').textContent = formattedDate;
-            document.getElementById('detail-doctor').textContent = 'Médico tratante'; // Puedes ajustar esto
-            document.getElementById('detail-model').textContent = 'Modelo Predictivo'; // Puedes ajustar esto
-            document.getElementById('detail-eval-id').textContent = evaluation.id;
+                // Helper function to safely set text content
+                function safeSetText(id, text) {
+                    const element = document.getElementById(id);
+                    if (element) element.textContent = text;
+                }
 
-            // Llenar sección de severidad
-            document.getElementById('detail-severity-score').textContent = `${evaluation.severity_level}/5`;
-            const severityBadge = document.getElementById('detail-severity-label');
-            severityBadge.textContent = getSeverityText(evaluation.severity_level);
-            severityBadge.className = `badge ${severityClass}`;
+                // Helper function to safely set class
+                function safeSetClass(id, className) {
+                    const element = document.getElementById(id);
+                    if (element) element.className = className;
+                }
 
-            // Actualizar barra de progreso de severidad
-            const severityProgress = document.getElementById('severity-progress');
-            severityProgress.style.width = `${(evaluation.severity_level / 5) * 100}%`;
-            severityProgress.className = `progress-bar ${severityClass.replace('badge-', 'bg-')}`;
+                // Llenar información básica
+                safeSetText('detail-name', `${evaluation.first_name || 'N/A'} ${evaluation.last_name || ''}`);
+                safeSetText('detail-age', `${evaluation.age || 'N/A'} años`);
+                safeSetText('detail-gender', evaluation.gender || 'No especificado');
+                safeSetText('detail-id', evaluation.rut || 'No disponible');
+                safeSetText('detail-date', formattedDate);
+                safeSetText('detail-doctor', 'Médico tratante');
+                safeSetText('detail-model', 'Modelo Predictivo');
+                safeSetText('detail-eval-id', evaluation.id || 'N/A');
 
-            // Llenar sección de riesgo
-            document.getElementById('detail-risk-score').textContent = `${riskPercent}%`;
-            const riskBadge = document.getElementById('detail-risk-label');
-            riskBadge.textContent = getRiskText(evaluation.risk_level);
-            riskBadge.className = `badge ${riskClass}`;
+                // Llenar sección de severidad
+                safeSetText('detail-severity-score', `${evaluation.severity_level}/5`);
+                safeSetText('detail-severity-label', getSeverityText(evaluation.severity_level));
+                safeSetClass('detail-severity-label', `badge ${severityClass}`);
 
-            // Actualizar barra de progreso de riesgo
-            const riskProgress = document.getElementById('risk-progress');
-            riskProgress.style.width = `${riskPercent}%`;
-            riskProgress.className = `progress-bar ${riskClass.replace('risk-', 'bg-')}`;
+                // Actualizar barra de progreso de severidad
+                const severityProgress = document.getElementById('severity-progress');
+                if (severityProgress) {
+                    severityProgress.style.width = `${(evaluation.severity_level / 5) * 100}%`;
+                    severityProgress.className = `progress-bar ${severityClass.replace('badge-', 'bg-')}`;
+                }
 
-            // Llenar información adicional
-            document.getElementById('detail-risk-factors').textContent = 'Calculado'; // Puedes ajustar esto
-            document.getElementById('detail-comorbidities').textContent = evaluation.observations || 'No especificadas';
-            document.getElementById('detail-recommendation').textContent = getRecommendation(evaluation.risk_level);
-            document.getElementById('detail-notes').textContent = evaluation.observations || 'No hay notas adicionales';
+                // Llenar sección de riesgo
+                safeSetText('detail-risk-score', `${riskPercent}%`);
+                safeSetText('detail-risk-label', getRiskText(evaluation.risk_level));
+                safeSetClass('detail-risk-label', `badge ${riskClass}`);
 
-            // Llenar signos vitales
-            document.getElementById('detail-pressure').textContent = `${evaluation.blood_pressure} mmHg`;
-            document.getElementById('detail-heart-rate').textContent = `${evaluation.heart_rate} lpm`;
-            document.getElementById('detail-oxygen').textContent = `${evaluation.oxygen_level}%`;
+                // Actualizar barra de progreso de riesgo
+                const riskProgress = document.getElementById('risk-progress');
+                if (riskProgress) {
+                    riskProgress.style.width = `${riskPercent}%`;
+                    riskProgress.className = `progress-bar ${riskClass.replace('risk-', 'bg-')}`;
+                }
 
-            // Llenar tabla de variables clínicas
-            const clinicalTable = document.querySelector('#clinical-table tbody');
-            clinicalTable.innerHTML = '';
+                // Llenar información adicional
+                safeSetText('detail-risk-factors', 'Calculado');
+                safeSetText('detail-comorbidities', evaluation.observations || 'No especificadas');
+                safeSetText('detail-recommendation', getRecommendation(evaluation.risk_level));
 
-            const clinicalVars = [
-                { variable: 'Presión Arterial', value: `${evaluation.blood_pressure} mmHg`, normal: '90-140 mmHg' },
-                { variable: 'Frecuencia Cardíaca', value: `${evaluation.heart_rate} lpm`, normal: '60-100 lpm' },
-                { variable: 'Oxígeno en Sangre', value: `${evaluation.oxygen_level}%`, normal: '95-100%' },
-                { variable: 'Condiciones Crónicas', value: evaluation.chronic_conditions, normal: '0-2' }
-            ];
+                const detailNotes = document.getElementById('detail-notes');
+                if (detailNotes) {
+                    detailNotes.textContent = evaluation.observations || 'No hay notas adicionales';
+                }
 
-            clinicalVars.forEach(item => {
-                const row = document.createElement('tr');
-                const status = getClinicalStatus(item.variable, item.value);
+                // Llenar signos vitales
+                safeSetText('detail-pressure', `${evaluation.blood_pressure || 'N/A'} mmHg`);
+                safeSetText('detail-heart-rate', `${evaluation.heart_rate || 'N/A'} lpm`);
+                safeSetText('detail-oxygen', `${evaluation.oxygen_level || 'N/A'}%`);
 
-                row.innerHTML = `
-                <td>${item.variable}</td>
-                <td>${item.value}</td>
-                <td>${item.normal}</td>
-                <td><span class="badge bg-${status.class}">${status.text}</span></td>
+                // Llenar tabla de variables clínicas
+                const clinicalTable = document.querySelector('#clinical-table tbody');
+                if (clinicalTable) {
+                    clinicalTable.innerHTML = '';
+
+                    const clinicalVars = [
+                        { variable: 'Presión Arterial', value: `${evaluation.blood_pressure || 'N/A'} mmHg`, normal: '90-140 mmHg' },
+                        { variable: 'Frecuencia Cardíaca', value: `${evaluation.heart_rate || 'N/A'} lpm`, normal: '60-100 lpm' },
+                        { variable: 'Oxígeno en Sangre', value: `${evaluation.oxygen_level || 'N/A'}%`, normal: '95-100%' },
+                        { variable: 'Condiciones Crónicas', value: evaluation.chronic_conditions || 'N/A', normal: '0-2' }
+                    ];
+
+                    clinicalVars.forEach(item => {
+                        const row = document.createElement('tr');
+                        const status = getClinicalStatus(item.variable, item.value);
+
+                        row.innerHTML = `
+                    <td>${item.variable}</td>
+                    <td>${item.value}</td>
+                    <td>${item.normal}</td>
+                    <td><span class="badge bg-${status.class}">${status.text}</span></td>
+                `;
+                        clinicalTable.appendChild(row);
+                    });
+                }
+
+                // Llenar recomendaciones
+                const recommendationsList = document.getElementById('detail-recommendations');
+                if (recommendationsList) {
+                    recommendationsList.innerHTML = '';
+
+                    const recommendations = generateRecommendations(evaluation);
+                    recommendations.forEach(rec => {
+                        const li = document.createElement('li');
+                        li.textContent = rec;
+                        recommendationsList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error('Error rendering evaluation details:', error);
+                const modalBody = document.querySelector('#detailModal .modal-body');
+                if (modalBody) {
+                    modalBody.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Error al mostrar los detalles: ${error.message}
+                </div>
             `;
-                clinicalTable.appendChild(row);
-            });
-
-            // Llenar recomendaciones
-            const recommendationsList = document.getElementById('detail-recommendations');
-            recommendationsList.innerHTML = '';
-
-            const recommendations = generateRecommendations(evaluation);
-            recommendations.forEach(rec => {
-                const li = document.createElement('li');
-                li.textContent = rec;
-                recommendationsList.appendChild(li);
-            });
+                }
+            }
         }
 
         // Funciones auxiliares
