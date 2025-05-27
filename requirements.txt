@@ -9,3 +9,4 @@ pytz
 supabase
 Werkzeug
 PyJWT
+gunicorn
