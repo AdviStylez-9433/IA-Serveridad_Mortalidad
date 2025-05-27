@@ -481,7 +481,7 @@
         async function loadEvaluations() {
             try {
                 showLoadingState();
-                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluations');
+                const response = await fetch('https://medpredictpro-api.onrender.com/get_evaluation');
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => null);
