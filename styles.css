@@ -424,22 +424,44 @@ a.text-hospital-red:hover {
     overflow-y: auto;
 }
 
+.pagination {
+    --bs-pagination-color: #00487C;
+    --bs-pagination-hover-color: #0062A3;
+    --bs-pagination-focus-color: #00487C;
+    --bs-pagination-active-bg: #00487C;
+    --bs-pagination-active-border-color: #00487C;
+    --bs-pagination-disabled-color: #6c757d;
+}
+
 /* Estilos para la paginación */
-.pagination .page-item.active .page-link {
-    background-color: #00487C;
-    border-color: #00487C;
+/* Mejoras para la paginación */
+.pagination {
+    --bs-pagination-color: #00487C;
+    --bs-pagination-hover-color: #0062A3;
+    --bs-pagination-focus-color: #00487C;
+    --bs-pagination-active-bg: #00487C;
+    --bs-pagination-active-border-color: #00487C;
+    --bs-pagination-disabled-color: #6c757d;
 }
 
 .pagination .page-link {
-    color: #00487C;
+    border-radius: 4px !important;
+    margin: 0 3px;
+    min-width: 38px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
 }
 
-/* Estilos para el botón de recarga */
-.btn-reload {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.pagination .page-link:hover {
+    background-color: #f0f8ff;
+}
+
+.pagination .page-item.active .page-link {
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 72, 124, 0.2);
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.6;
 }
