@@ -267,9 +267,7 @@ def save_evaluation():
             'observations': data['patient_data']['clinical_data'].get('observations', ''),
             'mortality_probability': float(data['results']['mortality_probability']),
             'severity_level': int(data['results']['severity_level']),
-            'risk_level': 'low' if float(data['results']['mortality_probability']) < 0.3 else 
-                         'medium' if float(data['results']['mortality_probability']) < 0.7 else 
-                         'high'
+            'risk_level': data['results'].get('risk_level', 'low')
         }
         
         print("Datos a insertar:", evaluation)  # Log para depuración
