@@ -444,7 +444,7 @@ function saveToDatabase() {
                 }
             },
             results: {
-                mortality_probability: parseFloat(document.querySelector('[class*="risk"] h2')?.textContent.replace('%', '') / 100 || 0),
+                mortality_probability: parseFloat(document.querySelector('[class*="risk"] h2')?.textContent.replace('%', '')) / 100 || 0,
                 severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 0),
                 risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
                             document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
