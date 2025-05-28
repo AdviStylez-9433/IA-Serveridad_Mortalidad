@@ -228,7 +228,7 @@ def load_evaluations():
     except Exception as e:
         print(f"Error loading evaluations: {str(e)}")
         return []
-
+    
 @app.route('/save_evaluation', methods=['POST'])
 def save_evaluation():
     try:

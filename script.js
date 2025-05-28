@@ -379,9 +379,8 @@ function showToast(message, type) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-// Función para guardar en la base de datos
 function saveToDatabase() {
-    // Verificar si hay datos del formulario
+    // Verificar datos del formulario
     const firstName = document.getElementById('first_name').value;
     const lastName = document.getElementById('last_name').value;
     const rut = document.getElementById('rut').value;
@@ -391,72 +390,55 @@ function saveToDatabase() {
         return;
     }
 
-    // Verificar si ya hay resultados calculados
-    const resultsDiv = document.getElementById('results');
-    if (resultsDiv.textContent.includes('Complete el formulario')) {
-        showToast('Primero calcule los resultados antes de guardar', 'warning');
-        return;
-    }
-
+    // Obtener el valor de probabilidad directamente de los resultados
+    const mortalityProb = parseFloat(document.querySelector('[class*="risk"] h2')?.textContent?.match(/\d+\.\d+|\d+/)?.[0]) / 100 || 0;
+    
     // Mostrar indicador de carga
     const saveButton = document.getElementById('saveToDatabase');
     saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
     saveButton.disabled = true;
 
-    // Obtener todos los datos necesarios
-    const patientData = {
-        personal_info: {
-            first_name: firstName,
-            last_name: lastName,
-            rut: rut,
-            gender: document.querySelector('input[name="gender"]:checked')?.value,
-            age: parseInt(document.getElementById('age').value)
+    // Preparar datos para enviar
+    const dataToSend = {
+        patient_data: {
+            personal_info: {
+                first_name: firstName,
+                last_name: lastName,
+                rut: rut,
+                gender: document.querySelector('input[name="gender"]:checked')?.value,
+                age: parseInt(document.getElementById('age').value)
+            },
+            clinical_data: {
+                blood_pressure: parseInt(document.getElementById('blood_pressure').value),
+                heart_rate: parseInt(document.getElementById('heart_rate').value),
+                oxygen_level: parseInt(document.getElementById('oxygen_level').value),
+                chronic_conditions: parseInt(document.getElementById('chronic_conditions').value),
+                observations: document.getElementById('medical_observations').value
+            }
         },
-        clinical_data: {
-            blood_pressure: parseInt(document.getElementById('blood_pressure').value),
-            heart_rate: parseInt(document.getElementById('heart_rate').value),
-            oxygen_level: parseInt(document.getElementById('oxygen_level').value),
-            chronic_conditions: parseInt(document.getElementById('chronic_conditions').value),
-            observations: document.getElementById('medical_observations').value
+        results: {
+            mortality_probability: mortalityProb,
+            severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 1),
+            risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
+                        document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
         }
     };
+
+    console.log("Datos a enviar:", dataToSend);  // Para depuración
 
     fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            patient_data: {
-                personal_info: {
-                    first_name: document.getElementById('first_name').value,
-                    last_name: document.getElementById('last_name').value,
-                    rut: document.getElementById('rut').value,
-                    gender: document.querySelector('input[name="gender"]:checked')?.value,
-                    age: parseInt(document.getElementById('age').value)
-                },
-                clinical_data: {
-                    blood_pressure: parseInt(document.getElementById('blood_pressure').value),
-                    heart_rate: parseInt(document.getElementById('heart_rate').value),
-                    oxygen_level: parseInt(document.getElementById('oxygen_level').value),
-                    chronic_conditions: parseInt(document.getElementById('chronic_conditions').value),
-                    observations: document.getElementById('medical_observations').value
-                }
-            },
-            results: {
-                mortality_probability: parseFloat(document.querySelector('[class*="risk"] h2')?.textContent.replace('%', '') / 100 || 0),
-                severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 0),
-                risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
-                            document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
-            }
-        })
+        body: JSON.stringify(dataToSend)
     })
     .then(async response => {
+        const data = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Error HTTP: ${response.status}`);
+            throw new Error(data.message || `Error HTTP: ${response.status}`);
         }
-        return response.json();
+        return data;
     })
     .then(data => {
         if (data.status === 'success') {
