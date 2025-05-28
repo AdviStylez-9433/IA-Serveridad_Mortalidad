@@ -580,24 +580,25 @@
                 });
 
                 // Determinar clases de riesgo y severidad
+                // Determinar clases de riesgo y severidad
                 const riskPercent = ((eval.mortality_probability || 0) * 100).toFixed(0);
                 const riskClass = getRiskClass(eval.mortality_probability);
                 const severityClass = getSeverityClass(eval.severity_level);
 
                 row.innerHTML = `
-                <td>${eval.first_name || 'N/A'} ${eval.last_name || ''}</td>
-                <td>${eval.age || 'N/A'}</td>
-                <td>${formattedDate}</td>
-                <td><span class="badge ${riskClass}">${getRiskText(eval.risk_level)} (${riskPercent}%)</span></td>
-                <td><span class="badge ${severityClass}">${getSeverityText(eval.severity_level)} (${eval.severity_level}/5)</span></td>
-                <td>
-                    <button class="btn btn-sm btn-hospital-blue view-details" 
-                        data-bs-toggle="modal" data-bs-target="#detailModal"
-                        data-eval-id="${eval.id}">
-                        <i class="bi bi-eye-fill"></i> Ver
-                    </button>
-                </td>
-            `;
+                    <td>${eval.first_name || 'N/A'} ${eval.last_name || ''}</td>
+                    <td>${eval.age || 'N/A'}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="badge ${riskClass}">${getRiskText(eval.risk_level)} (${riskPercent}%)</span></td>
+                    <td><span class="badge ${severityClass}">${getSeverityText(eval.severity_level)} (${eval.severity_level}/5)</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-hospital-blue view-details" 
+                            data-bs-toggle="modal" data-bs-target="#detailModal"
+                            data-eval-id="${eval.id}">
+                            <i class="bi bi-eye-fill"></i> Ver
+                        </button>
+                    </td>
+                `;
                 tableBody.appendChild(row);
             });
 

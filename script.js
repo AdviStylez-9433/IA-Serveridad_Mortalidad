@@ -421,10 +421,6 @@ function saveToDatabase() {
         }
     };
 
-    const riskText = document.querySelector('[class*="risk"] h2')?.textContent || '';
-    const match = riskText.match(/\((\d+(?:\.\d+)?)%\)/);  // Busca (67%) y extrae el número
-    const mortality_probability = match ? parseFloat(match[1]) / 100 : 0;
-
     fetch('https://medpredictpro-api.onrender.com/save_evaluation', {
         method: 'POST',
         headers: {
@@ -448,7 +444,7 @@ function saveToDatabase() {
                 }
             },
             results: {
-                mortality_probability: mortality_probability,
+                mortality_probability: parseFloat(document.querySelector('[class*="risk"] h2')?.textContent.replace('%', '') / 100 || 0),
                 severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 0),
                 risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
                             document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
