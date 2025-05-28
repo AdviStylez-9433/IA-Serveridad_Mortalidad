@@ -34,8 +34,8 @@ CORS(app, resources={
 # Funciones de ayuda para autenticación
 def generate_token(user_id):
     payload = {
-        'exp': datetime.datetime.utcnow() + app.config['JWT_EXPIRATION_DELTA'],
-        'iat': datetime.datetime.utcnow(),
+        'exp': datetime.utcnow() + app.config['JWT_EXPIRATION_DELTA'],
+        'iat': datetime.utcnow(),
         'sub': user_id
     }
     return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
@@ -78,7 +78,7 @@ def login():
 
         # Actualizar último login
         supabase.table('users') \
-               .update({'last_login': datetime.datetime.now().isoformat()}) \
+               .update({'last_login': datetime.now().isoformat()}) \
                .eq('id', user['id']) \
                .execute()
 
