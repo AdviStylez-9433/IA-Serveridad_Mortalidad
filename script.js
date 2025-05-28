@@ -390,8 +390,17 @@ function saveToDatabase() {
         return;
     }
 
-    // Obtener el valor de probabilidad directamente de los resultados
-    const mortalityProb = parseFloat(document.querySelector('[class*="risk"] h2')?.textContent?.match(/\d+\.\d+|\d+/)?.[0]) / 100 || 0;
+    // Obtener el porcentaje DIRECTAMENTE del gráfico o texto de resultados
+    const mortalityPercent = parseFloat(document.querySelector('.risk-indicator.low-risk, .risk-indicator.medium-risk, .risk-indicator.high-risk')?.nextElementSibling?.textContent?.match(/\d+\.?\d*/)?.[0]) || 0;
+    
+    // Obtener nivel de severidad
+    const severityLevel = parseInt(document.querySelector('.severity-indicator')?.textContent?.match(/\d+/)?.[0]) || 1;
+    
+    // Determinar risk_level basado en clases CSS
+    const riskIndicator = document.querySelector('.risk-indicator');
+    let riskLevel = 'low';
+    if (riskIndicator.classList.contains('medium-risk')) riskLevel = 'medium';
+    if (riskIndicator.classList.contains('high-risk')) riskLevel = 'high';
     
     // Mostrar indicador de carga
     const saveButton = document.getElementById('saveToDatabase');
@@ -417,10 +426,9 @@ function saveToDatabase() {
             }
         },
         results: {
-            mortality_probability: mortalityProb,
-            severity_level: parseInt(document.querySelector('.severity-indicator')?.textContent.replace('Nivel ', '') || 1),
-            risk_level: document.querySelector('.risk-indicator')?.classList.contains('low-risk') ? 'low' : 
-                        document.querySelector('.risk-indicator')?.classList.contains('medium-risk') ? 'medium' : 'high'
+            mortality_probability: mortalityPercent / 100, // Convertir a decimal
+            severity_level: severityLevel,
+            risk_level: riskLevel
         }
     };
 
