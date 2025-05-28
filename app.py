@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import time
 import pytz
@@ -14,14 +14,13 @@ import os
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-import datetime
 
 # Configuración inicial de la aplicación
 app = Flask(__name__, static_folder='.', static_url_path='')
 
 # Configuración JWT
 app.config['SECRET_KEY'] = 'medpredictpro2025'  # Cambia esto en producción!
-app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(hours=24)
+app.config['JWT_EXPIRATION_DELTA'] = timedelta(hours=24)
 
 # Configuración CORS detallada
 CORS(app, resources={   
